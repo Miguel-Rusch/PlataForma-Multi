@@ -62,7 +62,7 @@
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jbtPrencher" min="-2" max="-2" attributes="0"/>
+                      <Component id="jbtCancelar" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jbtAlterar" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -96,10 +96,10 @@
               </Group>
               <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jbtPrencher" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jbtCancelar" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jbtAlterar" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="66" max="32767" attributes="0"/>
+              <EmptySpace pref="70" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -114,6 +114,9 @@
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jtfIdUsuarioActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
@@ -139,15 +142,21 @@
     </Component>
     <Component class="javax.swing.JTextField" name="jtfSenha">
     </Component>
-    <Component class="javax.swing.JButton" name="jbtPrencher">
+    <Component class="javax.swing.JButton" name="jbtCancelar">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Prencher"/>
+        <Property name="text" type="java.lang.String" value="Cancelar"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbtCancelarActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jbtAlterar">
       <Properties>
         <Property name="text" type="java.lang.String" value="Alterar"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbtAlterarActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
