@@ -137,7 +137,7 @@ public class GUILog extends javax.swing.JFrame {
         
         LVO.setEmail(jtfEmail.getText());
         LVO.setSenha(jtfSenha.getText());
-        
+        LVO.setEm(jtfEmail.getText());
         loginDAO lDAO = new loginDAO();
         
     

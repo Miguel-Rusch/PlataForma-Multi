@@ -12,6 +12,15 @@ package VO;
 public class loginVO {
     private int idLogin;
     private String email,senha,usuario;
+   public static String em;
+
+    public static String getEm() {
+        return em;
+    }
+
+    public static void setEm(String em) {
+        loginVO.em = em;
+    }
 
     public int getIdLogin() {
         return idLogin;

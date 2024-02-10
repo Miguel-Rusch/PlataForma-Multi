@@ -5,17 +5,95 @@
  */
 package view;
 
+import DAO.jogoDAO;
+import VO.jogoVO;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import jogoSimples.JogoDaVelha;
+
 /**
  *
  * @author 182220058
  */
 public class GUIPesquisar extends javax.swing.JFrame {
-
+    
+    DefaultTableModel dtm = new DefaultTableModel(
+                new Object[][]{},
+            new Object[]{"Código", "Nome", "Valor Custo", "Quantidade"}
+    );
     /**
      * Creates new form GUIPesquisar
      */
     public GUIPesquisar() {
         initComponents();
+        prencherTabela();
+    }
+    
+    private void prencherTabela(){
+        limparTabela();
+         try {
+            jogoDAO JDAO = new jogoDAO();
+
+            ArrayList<jogoVO> crod = new ArrayList<>();
+            
+            
+            crod = JDAO.mostrarJogos();
+            
+            for ( int i = 0; i < crod.size(); i++) {
+                dtm.addRow(new String[] { 
+                    String.valueOf(crod.get(i).getIdJogo()),
+                    String.valueOf(crod.get(i).getNome() ),
+                    String.valueOf(crod.get(i).getTipo()),
+                    String.valueOf(crod.get(i).getAcessos()),
+                });
+            }
+            jtTabela.setModel(dtm);
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,"ERRO nO GUICOLABORADOR" + e.getMessage()  );
+        }
+    }
+    private void filtarJogos() throws SQLException{
+        if(jtfPesquisar.getText().isEmpty()){
+            prencherTabela();
+        }else{
+            String pesquisa = (String) jcClasses.getSelectedItem();
+            String query = null;
+            
+            if(pesquisa.equals("Id")){
+                query = "where idJogo =  " + jtfPesquisar.getText();
+                }else if( pesquisa.equals("Nome")){
+                    query = "where nome like '%" + jtfPesquisar.getText() + "%' ";
+                }else if(pesquisa.equals("Tipo")){
+                    query = "where tipo like '%" + jtfPesquisar.getText() + "%' ";
+                }
+             ArrayList<jogoVO> prod = new ArrayList<>();
+                
+                //Recebendo o ArrayList cheio no produto
+                jogoDAO JDAO = new jogoDAO();
+                prod = JDAO.filtarJogos(query);
+                
+                for( int i = 0; i < prod.size(); i++){
+                    dtm.addRow(new String[] {
+                        String.valueOf(prod.get(i).getIdJogo()),
+                        String.valueOf(prod.get(i).getNome() ),
+                        String.valueOf(prod.get(i).getTipo()),
+                        String.valueOf(prod.get(i).getAcessos()),
+                    });
+                }//fecha o laço for
+                
+                //Adicionando o modelo de tablea com os dados na tabela jtProduto
+                jtTabela.setModel(dtm);
+        }
+    
+    }
+    
+    private void limparTabela(){
+        dtm.setNumRows(0);
     }
 
     /**
@@ -27,37 +105,40 @@ public class GUIPesquisar extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField1 = new javax.swing.JTextField();
+        jtfPesquisar = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jcClasses = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jtTabela = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jcPago = new javax.swing.JCheckBox();
+        jbtIR = new javax.swing.JButton();
         jcMaisPopular = new javax.swing.JCheckBox();
         jcMenosPopular = new javax.swing.JCheckBox();
-        jcGratis = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        jtfPesquisar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                jtfPesquisarActionPerformed(evt);
+            }
+        });
+        jtfPesquisar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jtfPesquisarKeyReleased(evt);
             }
         });
 
         jLabel2.setText("Pesquisar");
 
-        jcClasses.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Id", "Nome", "Tipo", "Pago" }));
+        jcClasses.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Id", "Nome", "Tipo" }));
         jcClasses.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jcClassesActionPerformed(evt);
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jtTabela.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -65,19 +146,31 @@ public class GUIPesquisar extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Id", "Nome", "Tipo", "Pago"
+                "Id", "Nome", "Tipo", "Acessos"
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jtTabela);
+        if (jtTabela.getColumnModel().getColumnCount() > 0) {
+            jtTabela.getColumnModel().getColumn(0).setResizable(false);
+            jtTabela.getColumnModel().getColumn(1).setResizable(false);
+            jtTabela.getColumnModel().getColumn(2).setResizable(false);
+            jtTabela.getColumnModel().getColumn(3).setResizable(false);
+        }
 
         jLabel1.setText("Insira o Id: ");
 
-        jButton1.setText("Ir");
-
-        jcPago.setText("Pago");
-        jcPago.addActionListener(new java.awt.event.ActionListener() {
+        jbtIR.setText("Ir");
+        jbtIR.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jcPagoActionPerformed(evt);
+                jbtIRActionPerformed(evt);
             }
         });
 
@@ -95,13 +188,6 @@ public class GUIPesquisar extends javax.swing.JFrame {
             }
         });
 
-        jcGratis.setText("Grátis");
-        jcGratis.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jcGratisActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -111,30 +197,25 @@ public class GUIPesquisar extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap(24, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jcMenosPopular)
-                                .addGap(18, 18, 18)
-                                .addComponent(jcMaisPopular)
-                                .addGap(18, 18, 18)
-                                .addComponent(jcGratis)
-                                .addGap(18, 18, 18)
-                                .addComponent(jcPago))
+                            .addComponent(jcMenosPopular)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(37, 37, 37)
-                        .addComponent(jcClasses, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(71, 71, 71)
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton1)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jbtIR)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jcMaisPopular)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel2)
+                            .addGap(37, 37, 37)
+                            .addComponent(jcClasses, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(12, 12, 12)
+                            .addComponent(jtfPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -142,20 +223,18 @@ public class GUIPesquisar extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtfPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(jcClasses, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(36, 36, 36)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jcPago)
                     .addComponent(jcMaisPopular)
-                    .addComponent(jcMenosPopular)
-                    .addComponent(jcGratis))
+                    .addComponent(jcMenosPopular))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
+                    .addComponent(jbtIR)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addGap(59, 59, 59))
@@ -164,25 +243,13 @@ public class GUIPesquisar extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void jtfPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfPesquisarActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_jtfPesquisarActionPerformed
 
     private void jcClassesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcClassesActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jcClassesActionPerformed
-
-    private void jcPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcPagoActionPerformed
-        if(jcGratis.isSelected() && jcPago.isSelected()){
-            jcGratis.setSelected(false);
-        }
-    }//GEN-LAST:event_jcPagoActionPerformed
-
-    private void jcGratisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcGratisActionPerformed
-        if(jcGratis.isSelected() && jcPago.isSelected()){
-            jcPago.setSelected(false);
-        }
-    }//GEN-LAST:event_jcGratisActionPerformed
 
     private void jcMaisPopularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcMaisPopularActionPerformed
       if(jcMaisPopular.isSelected() && jcMenosPopular.isSelected()){
@@ -195,6 +262,21 @@ public class GUIPesquisar extends javax.swing.JFrame {
             jcMaisPopular.setSelected(false);
         }
     }//GEN-LAST:event_jcMenosPopularActionPerformed
+
+    private void jbtIRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtIRActionPerformed
+    
+    
+            
+    }//GEN-LAST:event_jbtIRActionPerformed
+
+    private void jtfPesquisarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtfPesquisarKeyReleased
+        try {
+            limparTabela();
+            filtarJogos();
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIPesquisar.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jtfPesquisarKeyReleased
 
     /**
      * @param args the command line arguments
@@ -232,17 +314,15 @@ public class GUIPesquisar extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
+    private javax.swing.JButton jbtIR;
     private javax.swing.JComboBox<String> jcClasses;
-    private javax.swing.JCheckBox jcGratis;
     private javax.swing.JCheckBox jcMaisPopular;
     private javax.swing.JCheckBox jcMenosPopular;
-    private javax.swing.JCheckBox jcPago;
+    private javax.swing.JTable jtTabela;
+    private javax.swing.JTextField jtfPesquisar;
     // End of variables declaration//GEN-END:variables
 }
