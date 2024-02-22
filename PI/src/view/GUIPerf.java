@@ -5,6 +5,12 @@
  */
 package view;
 
+import DAO.loginDAO;
+import VO.loginVO;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author 182220058
@@ -14,8 +20,32 @@ public class GUIPerf extends javax.swing.JInternalFrame {
     /**
      * Creates new form GUIPerf
      */
-    public GUIPerf() {
+    public GUIPerf() throws SQLException {
         initComponents();
+        mostrarInfo();
+    }
+    public void mostrarInfo() throws SQLException{
+        loginVO lvo = new loginVO();
+        loginDAO lDAo = new loginDAO();
+        
+        String[] info = lDAo.pesquisarInfo(lvo);
+        jtfIdUsuario.setText( info[0]);
+        jtfEmail.setText(info[1]);
+        jtfSenha.setText(info[2]);
+        jtfUsuario.setText(info[3]);
+    }
+    public void alterarInfo() throws SQLException{
+    loginVO LVO = new loginVO();
+    loginDAO lDAO = new loginDAO();
+    String[] info = new String[4];
+    LVO.setEm(jtfEmail.getText());
+    
+    info[0] = jtfIdUsuario.getText();
+    info[1] = jtfEmail.getText();
+    info[2] = jtfSenha.getText();
+    info[3] = jtfUsuario.getText();
+    
+    lDAO.alterar(info);
     }
 
     /**
@@ -38,7 +68,7 @@ public class GUIPerf extends javax.swing.JInternalFrame {
         jtfEmail = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jtfSenha = new javax.swing.JTextField();
-        jbtPrencher = new javax.swing.JButton();
+        jbtCancelar = new javax.swing.JButton();
         jbtAlterar = new javax.swing.JButton();
 
         jScrollPane1.setViewportView(jTree1);
@@ -52,6 +82,11 @@ public class GUIPerf extends javax.swing.JInternalFrame {
         jLabel1.setText("Id");
 
         jtfIdUsuario.setEditable(false);
+        jtfIdUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtfIdUsuarioActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Usuário");
 
@@ -61,9 +96,19 @@ public class GUIPerf extends javax.swing.JInternalFrame {
 
         jLabel4.setText("Senha");
 
-        jbtPrencher.setText("Prencher");
+        jbtCancelar.setText("Cancelar");
+        jbtCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtCancelarActionPerformed(evt);
+            }
+        });
 
         jbtAlterar.setText("Alterar");
+        jbtAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtAlterarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -85,7 +130,7 @@ public class GUIPerf extends javax.swing.JInternalFrame {
                             .addComponent(jtfEmail)
                             .addComponent(jtfSenha)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jbtPrencher)
+                        .addComponent(jbtCancelar)
                         .addGap(18, 18, 18)
                         .addComponent(jbtAlterar)))
                 .addContainerGap(226, Short.MAX_VALUE))
@@ -111,13 +156,33 @@ public class GUIPerf extends javax.swing.JInternalFrame {
                     .addComponent(jtfSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(50, 50, 50)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jbtPrencher)
+                    .addComponent(jbtCancelar)
                     .addComponent(jbtAlterar))
-                .addContainerGap(66, Short.MAX_VALUE))
+                .addContainerGap(70, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jtfIdUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfIdUsuarioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jtfIdUsuarioActionPerformed
+
+    private void jbtCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtCancelarActionPerformed
+        try {
+            mostrarInfo();
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIPerf.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jbtCancelarActionPerformed
+
+    private void jbtAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtAlterarActionPerformed
+        try {
+            alterarInfo();
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIPerf.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jbtAlterarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -129,7 +194,7 @@ public class GUIPerf extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTree jTree1;
     private javax.swing.JButton jbtAlterar;
-    private javax.swing.JButton jbtPrencher;
+    private javax.swing.JButton jbtCancelar;
     private javax.swing.JTextField jtfEmail;
     private javax.swing.JTextField jtfIdUsuario;
     private javax.swing.JTextField jtfSenha;
