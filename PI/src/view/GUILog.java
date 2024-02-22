@@ -137,7 +137,7 @@ public class GUILog extends javax.swing.JFrame {
         
         LVO.setEmail(jtfEmail.getText());
         LVO.setSenha(jtfSenha.getText());
-        
+        LVO.setEm(jtfEmail.getText());
         loginDAO lDAO = new loginDAO();
         
     
@@ -159,16 +159,18 @@ public class GUILog extends javax.swing.JFrame {
     }//GEN-LAST:event_jbLoginActionPerformed
 
     private void jtbOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtbOffActionPerformed
-//        LoginVO lVO = new LoginVO();
-//        lVO.setOnline(false);
+        loginVO lVO = new loginVO();
+        lVO.setOnline(false);
 //        
       GUIPrincipal princ = new GUIPrincipal();
       princ.setVisible(true);
-//      dispose();
+      dispose();
     }//GEN-LAST:event_jtbOffActionPerformed
 
     private void jtbCadastroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtbCadastroActionPerformed
        GUICadastro cad = new GUICadastro();
+          loginVO lVO = new loginVO();
+        lVO.setOnline(true);
        cad.setVisible(true);
        dispose();
     }//GEN-LAST:event_jtbCadastroActionPerformed
