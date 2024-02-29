@@ -5,7 +5,12 @@
  */
 package view;
 
+import VO.loginVO;
 import com.sun.org.apache.bcel.internal.generic.AALOAD;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 
 /**
@@ -41,7 +46,6 @@ public class GUIPrincipal extends javax.swing.JFrame {
 
         jPopupMenu1 = new javax.swing.JPopupMenu();
         jDesktopPane2 = new javax.swing.JDesktopPane();
-        jButton1 = new javax.swing.JButton();
         jDesktopPane1 = new javax.swing.JDesktopPane();
         jbPesquisar = new javax.swing.JButton();
         jbHost = new javax.swing.JButton();
@@ -51,8 +55,6 @@ public class GUIPrincipal extends javax.swing.JFrame {
         jpmPerfil = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jButton1.setText("jButton1");
 
         jbPesquisar.setText("Pesquisar");
         jbPesquisar.addActionListener(new java.awt.event.ActionListener() {
@@ -109,7 +111,6 @@ public class GUIPrincipal extends javax.swing.JFrame {
                 .addContainerGap(243, Short.MAX_VALUE))
         );
 
-        jDesktopPane2.setLayer(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jDesktopPane2.setLayer(jDesktopPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jDesktopPane2Layout = new javax.swing.GroupLayout(jDesktopPane2);
@@ -117,22 +118,12 @@ public class GUIPrincipal extends javax.swing.JFrame {
         jDesktopPane2Layout.setHorizontalGroup(
             jDesktopPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jDesktopPane2Layout.createSequentialGroup()
-                .addGap(105, 105, 105)
-                .addComponent(jButton1)
-                .addContainerGap(792, Short.MAX_VALUE))
-            .addGroup(jDesktopPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jDesktopPane2Layout.createSequentialGroup()
-                    .addComponent(jDesktopPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 82, Short.MAX_VALUE)))
+                .addComponent(jDesktopPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 82, Short.MAX_VALUE))
         );
         jDesktopPane2Layout.setVerticalGroup(
             jDesktopPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDesktopPane2Layout.createSequentialGroup()
-                .addGap(148, 148, 148)
-                .addComponent(jButton1)
-                .addContainerGap(422, Short.MAX_VALUE))
-            .addGroup(jDesktopPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jDesktopPane1))
+            .addComponent(jDesktopPane1)
         );
 
         jMenuBar1.setBackground(new java.awt.Color(0, 0, 0));
@@ -169,9 +160,20 @@ public class GUIPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jpmPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jpmPerfilActionPerformed
-        GUIPerf perf = new GUIPerf();
-        jDesktopPane2.add(perf);
-        perf.setVisible(true);
+        try {
+            loginVO lvo = new loginVO();
+            if(lvo.isOnline()){
+            GUIPerf perf = new GUIPerf();
+            jDesktopPane2.add(perf);
+            perf.setVisible(true);
+            }else{
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Não pode acessar perfil pois está em modo offline!");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }//GEN-LAST:event_jpmPerfilActionPerformed
 
@@ -230,7 +232,6 @@ public class GUIPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JDesktopPane jDesktopPane2;
     private javax.swing.JMenu jMenu1;
