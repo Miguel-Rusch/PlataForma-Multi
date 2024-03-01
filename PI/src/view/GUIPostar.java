@@ -5,17 +5,104 @@
  */
 package view;
 
+import DAO.jogoDAO;
+import DAO.postDAO;
+import VO.jogoVO;
+import VO.postVO;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author 182220058
  */
 public class GUIPostar extends javax.swing.JFrame {
-
+    
+    DefaultTableModel dtm = new DefaultTableModel(
+                new Object[][]{},
+            new Object[]{"Usuário", "Host", "Comentario", "Jogo"}
+    );
     /**
      * Creates new form GUIPostar
      */
     public GUIPostar() {
         initComponents();
+        prencher();
+    }
+    private void prencher(){
+     limpar();
+     try {
+            postDAO PDAO = new postDAO();
+
+            ArrayList<postVO> crod = new ArrayList<>();
+            
+            
+            crod = PDAO.mostrarPost();
+            
+            for ( int i = 0; i < crod.size(); i++) {
+                dtm.addRow(new String[] { 
+                    String.valueOf(crod.get(i).getUsuario()),
+                    String.valueOf(crod.get(i).getHost()),
+                    String.valueOf(crod.get(i).getComentario()),
+                    String.valueOf(crod.get(i).getJogo()),
+                });
+            }
+            jtTabela.setModel(dtm);
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,"ERRO nO GUICOLABORADOR" + e.getMessage()  );
+        }
+        
+    }
+    private void filtarPost() throws SQLException{
+        if(jtfPesquisa.getText().isEmpty()){
+            prencher();
+        }else{
+            String pesquisa = (String) jcClsases.getSelectedItem();
+            String query = null;
+            
+           if( pesquisa.equals("Usuário")){
+                    query = "where usuario like '%" + jtfPesquisa.getText() + "%' ";
+                }else if(pesquisa.equals("Jogo")){
+                    query = "where jogo like '%" + jtfPesquisa.getText() + "%' ";
+                }
+             ArrayList<postVO> prod = new ArrayList<>();
+                
+                //Recebendo o ArrayList cheio no produto
+                postDAO PDAO = new postDAO();
+                prod = PDAO.filtarPost(query);
+                
+                for( int i = 0; i < prod.size(); i++){
+                    dtm.addRow(new String[] {
+                        String.valueOf(prod.get(i).getUsuario()),
+                        String.valueOf(prod.get(i).getHost()),
+                        String.valueOf(prod.get(i).getComentario()),
+                        String.valueOf(prod.get(i).getJogo())
+                    });
+                }//fecha o laço for
+                
+                //Adicionando o modelo de tablea com os dados na tabela jtProduto
+                jtTabela.setModel(dtm);
+        }
+    }
+    private void postar() throws SQLException{
+        if(jtfJogo.getText().equals("")){
+        JOptionPane.showMessageDialog(null,"Escreva um jogo");
+        }else{
+         postVO pvo = new postVO();
+         pvo.setComentario(jtfComentario.getText());
+         pvo.setJogo(jtfJogo.getText());
+         
+         postDAO pdao = new postDAO();
+         pdao.postar(pvo);
+        }
+    }
+    private void limpar(){
+        dtm.setNumRows(0);
     }
 
     /**
@@ -28,10 +115,10 @@ public class GUIPostar extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jtTabela = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jtfPesquisa = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        jcClsases = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jtfJogo = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -39,7 +126,7 @@ public class GUIPostar extends javax.swing.JFrame {
         jtfComentario = new javax.swing.JTextField();
         jbCriar = new javax.swing.JButton();
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jtTabela.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -48,14 +135,20 @@ public class GUIPostar extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Usuário", "Jogo", "Host", "Comentário"
+                "Usuário", "Host", "Comentário", "Jogo"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(jtTabela);
 
         jLabel1.setText("Pesquisar");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Usuário", "Jogo" }));
+        jtfPesquisa.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jtfPesquisaKeyReleased(evt);
+            }
+        });
+
+        jcClsases.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Usuário", "Jogo" }));
 
         jLabel2.setText("       Criar Post");
 
@@ -100,7 +193,7 @@ public class GUIPostar extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jtfPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jcClsases, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -108,7 +201,7 @@ public class GUIPostar extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jcClsases, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jtfPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
@@ -133,8 +226,23 @@ public class GUIPostar extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbCriarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbCriarActionPerformed
-        // TODO add your handling code here:
+        try {
+            postar();
+            prencher();
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIPostar.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jbCriarActionPerformed
+
+    private void jtfPesquisaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtfPesquisaKeyReleased
+     
+        try {
+            limpar();
+            filtarPost();
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIPostar.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jtfPesquisaKeyReleased
 
     /**
      * @param args the command line arguments
@@ -172,14 +280,14 @@ public class GUIPostar extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JButton jbCriar;
+    private javax.swing.JComboBox<String> jcClsases;
+    private javax.swing.JTable jtTabela;
     private javax.swing.JTextField jtfComentario;
     private javax.swing.JTextField jtfJogo;
     private javax.swing.JTextField jtfPesquisa;
