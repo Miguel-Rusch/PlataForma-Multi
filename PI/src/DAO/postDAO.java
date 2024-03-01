@@ -84,7 +84,7 @@ public class postDAO {
             con.close();
         }
     }
-    public void postar(postVO PVO) throws SQLException {
+    public int postar(postVO PVO) throws SQLException {
         Connection con = new ConexaoBanco().getConexao();
            
 
@@ -99,16 +99,28 @@ public class postDAO {
             System.out.println(usu);
             }
             
-            String sql = "INSERT INTO post VALUES (null, ?, ?, ?, ?)";
+            String sql = "INSERT INTO post VALUES (null, ?, ?, ?, ?,?)";
 
             PreparedStatement pstm = con.prepareStatement(sql);
             pstm.setString(1, usu);
             pstm.setInt(2, 2220);
             pstm.setString(3, PVO.getComentario());
             pstm.setString(4, PVO.getJogo());
+            pstm.setString(5, LVO.getEm());
 
             pstm.execute();
             pstm.close();
+            
+           
+         String sql9 = "select * from post where email like '"+LVO.getEm() +"'";
+            PreparedStatement psts = con.prepareStatement(sql9);
+            ResultSet rss = psts.executeQuery();
+            int idPost = 0;
+            while(rss.next()){
+            idPost =Integer.parseInt(rss.getString("idPost"));
+            System.out.println(idPost);
+            }
+            return idPost;
 
         } catch (SQLException se) {
             throw new SQLException("Erro em postar o post!" + se.getMessage());
@@ -117,4 +129,40 @@ public class postDAO {
         }//fim do try catch finally
 
     }//
+    public void deletarPost(int idPost) throws SQLException {
+        Connection con = new ConexaoBanco().getConexao();
+
+        try {
+            String sql = "delete from post where idPost = ?";
+            PreparedStatement pstm = con.prepareStatement(sql);
+
+            pstm.setInt(1, idPost);
+            pstm.execute();
+            pstm.close();
+        } catch (SQLException se) {
+            throw new SQLException("Erro ao deletar post! PostDAO " + se.getMessage());
+        } finally {
+            con.close();
+        }//fim da finally
+    }
+    public String permitirDel(int idPost) throws SQLException{
+    Connection con = new ConexaoBanco().getConexao();
+
+        try {
+            String sql = "select * from post where idPost = ?";
+            PreparedStatement pstm = con.prepareStatement(sql);
+
+            pstm.setLong(1, idPost);
+            pstm.execute();
+             ResultSet rs = pstm.executeQuery();
+             String rsEm = null;
+              while (rs.next()) {
+               rsEm = rs.getString("email");
+                      }
+            return rsEm;
+         
+        } catch (SQLException se) {
+            throw new SQLException("Erro ao deletar post! PostDAO " + se.getMessage());
+        }
+    }
 }

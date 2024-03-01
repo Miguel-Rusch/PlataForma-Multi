@@ -42,10 +42,10 @@ public class GUILog extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jtfEmail = new javax.swing.JTextField();
-        jtfSenha = new javax.swing.JTextField();
         jbLogin = new javax.swing.JButton();
         jtbOff = new javax.swing.JButton();
         jtbCadastro = new javax.swing.JButton();
+        jtfsenha = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -79,16 +79,6 @@ public class GUILog extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(42, 42, 42)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
-                .addGap(38, 38, 38)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jtfEmail)
-                    .addComponent(jtfSenha, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
-                .addContainerGap(183, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addComponent(jtbCadastro)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -96,6 +86,16 @@ public class GUILog extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jtbOff)
                 .addGap(42, 42, 42))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel1))
+                .addGap(34, 34, 34)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jtfEmail, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                    .addComponent(jtfsenha))
+                .addContainerGap(187, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -107,7 +107,7 @@ public class GUILog extends javax.swing.JFrame {
                 .addGap(46, 46, 46)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jtfSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jtfsenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jbLogin)
@@ -136,7 +136,7 @@ public class GUILog extends javax.swing.JFrame {
         loginVO LVO = new loginVO();
         
         LVO.setEmail(jtfEmail.getText());
-        LVO.setSenha(jtfSenha.getText());
+        LVO.setSenha(jtfsenha.getText());
         LVO.setEm(jtfEmail.getText());
         loginDAO lDAO = new loginDAO();
         
@@ -145,6 +145,7 @@ public class GUILog extends javax.swing.JFrame {
             ResultSet rs = lDAO.login(LVO);
             if(rs.next()){
         GUIPrincipal princ = new GUIPrincipal();
+        LVO.setOnline(true);
         princ.setVisible(true);
         dispose();
         JOptionPane.showMessageDialog(null,"Login feito com sucesso!");
@@ -159,16 +160,18 @@ public class GUILog extends javax.swing.JFrame {
     }//GEN-LAST:event_jbLoginActionPerformed
 
     private void jtbOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtbOffActionPerformed
-//        LoginVO lVO = new LoginVO();
-//        lVO.setOnline(false);
+        loginVO lVO = new loginVO();
+        lVO.setOnline(false);
 //        
       GUIPrincipal princ = new GUIPrincipal();
       princ.setVisible(true);
-//      dispose();
+      dispose();
     }//GEN-LAST:event_jtbOffActionPerformed
 
     private void jtbCadastroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtbCadastroActionPerformed
        GUICadastro cad = new GUICadastro();
+      
+        
        cad.setVisible(true);
        dispose();
     }//GEN-LAST:event_jtbCadastroActionPerformed
@@ -217,6 +220,6 @@ public class GUILog extends javax.swing.JFrame {
     private javax.swing.JButton jtbCadastro;
     private javax.swing.JButton jtbOff;
     private javax.swing.JTextField jtfEmail;
-    private javax.swing.JTextField jtfSenha;
+    private javax.swing.JPasswordField jtfsenha;
     // End of variables declaration//GEN-END:variables
 }
