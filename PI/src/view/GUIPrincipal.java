@@ -5,10 +5,12 @@
  */
 package view;
 
+import VO.loginVO;
 import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 
 /**
@@ -53,6 +55,11 @@ public class GUIPrincipal extends javax.swing.JFrame {
         jpmPerfil = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jbPesquisar.setText("Pesquisar");
         jbPesquisar.addActionListener(new java.awt.event.ActionListener() {
@@ -159,9 +166,16 @@ public class GUIPrincipal extends javax.swing.JFrame {
 
     private void jpmPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jpmPerfilActionPerformed
         try {
+            loginVO lvo = new loginVO();
+            if(lvo.isOnline()){
             GUIPerf perf = new GUIPerf();
             jDesktopPane2.add(perf);
             perf.setVisible(true);
+            }else{
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Não pode acessar perfil pois está em modo offline!");
+            }
         } catch (SQLException ex) {
             Logger.getLogger(GUIPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -186,6 +200,19 @@ public class GUIPrincipal extends javax.swing.JFrame {
 
         pesq.setVisible(true);
     }//GEN-LAST:event_jbPesquisarActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+           GUIPostar guip = new GUIPostar();
+           GUIHost guih = new GUIHost();
+        
+        try {
+            guih.desconectarhost();
+            guip.deletarTodosPosts(); 
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+           
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments

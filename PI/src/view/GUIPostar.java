@@ -8,7 +8,9 @@ package view;
 import DAO.jogoDAO;
 import DAO.postDAO;
 import VO.jogoVO;
+import VO.loginVO;
 import VO.postVO;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -24,7 +26,7 @@ public class GUIPostar extends javax.swing.JFrame {
     
     DefaultTableModel dtm = new DefaultTableModel(
                 new Object[][]{},
-            new Object[]{"Usuário", "Host", "Comentario", "Jogo"}
+            new Object[]{"id","Usuário", "Host", "Comentario", "Jogo"}
     );
     /**
      * Creates new form GUIPostar
@@ -44,11 +46,13 @@ public class GUIPostar extends javax.swing.JFrame {
             crod = PDAO.mostrarPost();
             
             for ( int i = 0; i < crod.size(); i++) {
-                dtm.addRow(new String[] { 
+                dtm.addRow(new String[] {
+                    String.valueOf(crod.get(i).getIdPost()),
                     String.valueOf(crod.get(i).getUsuario()),
                     String.valueOf(crod.get(i).getHost()),
                     String.valueOf(crod.get(i).getComentario()),
                     String.valueOf(crod.get(i).getJogo()),
+                    
                 });
             }
             jtTabela.setModel(dtm);
@@ -90,16 +94,76 @@ public class GUIPostar extends javax.swing.JFrame {
         }
     }
     private void postar() throws SQLException{
+        loginVO lvo = new loginVO();
         if(jtfJogo.getText().equals("")){
         JOptionPane.showMessageDialog(null,"Escreva um jogo");
+        }else if(!lvo.isOnline()){
+            JOptionPane.showMessageDialog(null,"Não pode criar um post pois está em modo offline");
         }else{
          postVO pvo = new postVO();
          pvo.setComentario(jtfComentario.getText());
          pvo.setJogo(jtfJogo.getText());
-         
+            if(pvo.getNumPost() < pvo.getNumPostPerm()){
+            
          postDAO pdao = new postDAO();
-         pdao.postar(pvo);
+         int idPost = pdao.postar(pvo);
+         int [] postCriados =pvo.getIdPostCreated();
+         
+       int p = pvo.getNumPost();
+         pvo.setNumPost(p+ 1);
+        postCriados[p] = idPost;
+         pvo.setIdPostCreated(postCriados);
+         
+            }else{
+             JOptionPane.showMessageDialog(null,"Limite de posts atingidos delete um caso queira criar um novo");
+            }
         }
+    }
+    private void deletar(){
+        try {
+            int linha = jtTabela.getSelectedRow();
+            
+            if( linha == -1 ){
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Por favor selecione uma linha!");
+            }else{
+                
+                String idPost =   (String) jtTabela.getValueAt(linha, 0);
+                loginVO lvo = new loginVO();
+                postDAO PDAO = new postDAO();
+                String rsEm = PDAO.permitirDel(Integer.parseInt(idPost));
+            
+                if(rsEm.equals(lvo.getEm())){
+                PDAO.deletarPost(Integer.parseInt(idPost));
+                postVO pvo = new postVO();
+                }
+                else{
+                            JOptionPane.showMessageDialog(
+                    null,
+                    "Erro ao deleatr post ele não foi criado por você!");
+                }
+                
+                //Mensagem para o usuário
+                              
+               
+            }//fim do else
+        } catch (Exception e) {
+          
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Erro ao deleatr post!" + e.getMessage() );
+        }
+    }
+    public void deletarTodosPosts() throws SQLException{
+     postVO pvo = new postVO();
+     int[] posts = pvo.getIdPostCreated();
+     postDAO pdao = new postDAO();
+     for(int i = 0; i <= pvo.getNumPost();i++){
+     pdao.deletarPost(posts[i]);
+     posts[i] = 0;
+     pvo.setNumPost(0);
+     }
     }
     private void limpar(){
         dtm.setNumRows(0);
@@ -125,19 +189,37 @@ public class GUIPostar extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jtfComentario = new javax.swing.JTextField();
         jbCriar = new javax.swing.JButton();
+        jtbDeletar = new javax.swing.JButton();
+
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jtTabela.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Usuário", "Host", "Comentário", "Jogo"
+                "ID", "Usuário", "Host", "Comentário", "Jogo"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(jtTabela);
 
         jLabel1.setText("Pesquisar");
@@ -163,24 +245,19 @@ public class GUIPostar extends javax.swing.JFrame {
             }
         });
 
+        jtbDeletar.setText("Deletar");
+        jtbDeletar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtbDeletarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(160, 160, 160)
-                        .addComponent(jbCriar, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(66, 66, 66)
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addComponent(jtfJogo, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel4)
-                        .addGap(18, 18, 18)
-                        .addComponent(jtfComentario, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(147, 147, 147)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -193,7 +270,21 @@ public class GUIPostar extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jtfPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jcClsases, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jcClsases, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(66, 66, 66)
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jtfJogo, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel4))
+                            .addComponent(jbCriar, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jtbDeletar)
+                            .addComponent(jtfComentario, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -215,7 +306,9 @@ public class GUIPostar extends javax.swing.JFrame {
                             .addComponent(jtfJogo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
                         .addGap(18, 18, 18)
-                        .addComponent(jbCriar))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jbCriar)
+                            .addComponent(jtbDeletar)))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel4)
                         .addComponent(jtfComentario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -243,6 +336,24 @@ public class GUIPostar extends javax.swing.JFrame {
             Logger.getLogger(GUIPostar.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jtfPesquisaKeyReleased
+
+    private void jtbDeletarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtbDeletarActionPerformed
+      deletar();
+      limpar();
+      prencher();
+    }//GEN-LAST:event_jtbDeletarActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        // Caso queira fazer que quando sai feche todos seus post
+    }//GEN-LAST:event_formWindowClosed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        try {
+            deletarTodosPosts();
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIPostar.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -288,6 +399,7 @@ public class GUIPostar extends javax.swing.JFrame {
     private javax.swing.JButton jbCriar;
     private javax.swing.JComboBox<String> jcClsases;
     private javax.swing.JTable jtTabela;
+    private javax.swing.JButton jtbDeletar;
     private javax.swing.JTextField jtfComentario;
     private javax.swing.JTextField jtfJogo;
     private javax.swing.JTextField jtfPesquisa;

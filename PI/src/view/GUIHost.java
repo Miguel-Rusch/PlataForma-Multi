@@ -5,6 +5,12 @@
  */
 package view;
 
+import DAO.hostDAO;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author 182220058
@@ -16,6 +22,27 @@ public class GUIHost extends javax.swing.JFrame {
      */
     public GUIHost() {
         initComponents();
+    }
+    public void criarHost() throws SQLException{
+        hostDAO HDAO = new hostDAO();
+        int host= HDAO.mostrarHost();
+        if(host == 0){
+          HDAO.criarHost();  
+          host = HDAO.mostrarHost();
+        }
+        
+        jtfNumHost.setText(""+host);
+    }
+    public void conectarHost() throws SQLException{
+        hostDAO HDAO = new hostDAO();
+        HDAO.conectarHost(Integer.parseInt(jtfConectar.getText()));
+        JOptionPane.showMessageDialog(null,"Conectado com sucesso!");
+    }
+    public void desconectarhost() throws SQLException{
+        hostDAO HDAO = new hostDAO();
+        HDAO.desconectarHost();
+        
+       
     }
 
     /**
@@ -29,10 +56,18 @@ public class GUIHost extends javax.swing.JFrame {
 
         jbCriarHost = new javax.swing.JButton();
         jtfNumHost = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        jbtConectar = new javax.swing.JButton();
+        jtfConectar = new javax.swing.JTextField();
 
         setTitle("Host");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jbCriarHost.setText("Criar Host");
         jbCriarHost.addActionListener(new java.awt.event.ActionListener() {
@@ -43,7 +78,12 @@ public class GUIHost extends javax.swing.JFrame {
 
         jtfNumHost.setEditable(false);
 
-        jButton1.setText("Conectar Host");
+        jbtConectar.setText("Conectar Host");
+        jbtConectar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtConectarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -52,13 +92,13 @@ public class GUIHost extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(87, 87, 87)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jbtConectar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jbCriarHost, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jtfNumHost)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE))
-                .addContainerGap(105, Short.MAX_VALUE))
+                    .addComponent(jtfConectar, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE))
+                .addContainerGap(116, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -67,19 +107,44 @@ public class GUIHost extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jbCriarHost)
                     .addComponent(jtfNumHost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(72, 72, 72)
+                .addGap(40, 40, 40)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(112, Short.MAX_VALUE))
+                    .addComponent(jbtConectar)
+                    .addComponent(jtfConectar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(144, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbCriarHostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbCriarHostActionPerformed
-        // TODO add your handling code here:
+        try {
+            criarHost();
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIHost.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jbCriarHostActionPerformed
+
+    private void jbtConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtConectarActionPerformed
+        try {
+            conectarHost();
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIHost.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jbtConectarActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        
+    }//GEN-LAST:event_formWindowClosed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+       try {
+            desconectarhost();
+         
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIHost.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -118,9 +183,9 @@ public class GUIHost extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JButton jbCriarHost;
+    private javax.swing.JButton jbtConectar;
+    private javax.swing.JTextField jtfConectar;
     private javax.swing.JTextField jtfNumHost;
     // End of variables declaration//GEN-END:variables
 }

@@ -12,7 +12,17 @@ package VO;
 public class loginVO {
     private int idLogin;
     private String email,senha,usuario;
-   public static String em;
+   private static String em;
+   private static boolean online;
+
+    public static boolean isOnline() {
+        return online;
+    }
+
+    public static void setOnline(boolean online) {
+        loginVO.online = online;
+    }
+   
 
     public static String getEm() {
         return em;
