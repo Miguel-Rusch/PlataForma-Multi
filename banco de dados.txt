@@ -1,0 +1,130 @@
+create database PI;
+
+use PI;
+
+create table if not exists login(
+	idLogin int not null,
+    email	varchar(45) not null unique,
+    senha  varchar(15) not null,
+    usuario varchar(15) not null
+);
+
+alter table login 
+add constraint PK_LOGIN primary key(idLogin);
+
+alter table login
+change column  idLogin idLogin int not null auto_increment;
+
+select * from login;
+
+select * from login where email like 's';
+
+alter table login
+change column  email email varchar(15) not null ;
+
+Update login set 
+                    email =  'ew'   , 
+                     senha =   'ew' , 
+                    usuario =   'ires'
+                     where idLogin =   6;
+                     
+			
+
+create table if not exists jogo(
+	idJogo int not null,
+    nome	varchar(45) not null unique,
+    tipo  varchar(15) not null,
+    acessos int 
+);
+
+
+alter table jogo 
+add constraint PK_JOGO primary key(idJogo);
+
+alter table jogo
+change column idJogo idJogo int not null auto_increment;
+
+insert into jogo values (null,'Counter Strike','FPS',5);
+
+select * from jogo;
+
+Select * from jogo where idJogo = 1;
+
+Select * from jogo
+order by acessos DESC;
+
+create table if not exists post(
+	idPost int not null,
+    usuario	varchar(45) not null,
+    host  int,
+    comentario varchar(200) 
+);
+
+alter table post 
+add constraint PK_POST primary key(idPost);
+
+alter table post
+change column idPost idPost int not null auto_increment;
+
+alter table post
+add column jogo varchar(45);
+
+alter table post
+add column email varchar(45);
+
+select email from post;
+
+
+select usuario from login where email like 'm';
+
+select* from post ;
+
+create table if not exists host(
+	idHost int not null,
+    conect	boolean not null,
+    jogada varchar(45),
+    jogadaAlter varchar(45) 
+);
+
+alter table host 
+add constraint PK_HOST primary key(idHost);
+
+alter table host
+change column idHost idHost int not null auto_increment;
+
+alter table host
+change column idUsuario idUsuario varchar(45) not null unique;
+
+select * from host where idUsuario = 'we';
+INSERT INTO host VALUES (null, false, null, null,null,'we');
+
+select * from login;
+
+select * from host;
+
+delete from host where idUsuario = 'admin';
+delete from host where idHost =7;
+
+select * from host where idUsuario ='adn'
+
+select * from host where idUsuario like 'admin';
+
+update host set conect = true,idHostConect = 3 where idHost = 10 and senha = 1;
+
+alter table host
+add column senha varchar(45);
+
+delete from host where idHost = 15;
+
+select * from host;
+
+
+
+
+describe login;
+
+
+
+
+use dev2n231;
+
