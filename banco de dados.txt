@@ -114,6 +114,9 @@ update host set conect = true,idHostConect = 3 where idHost = 10 and senha = 1;
 alter table host
 add column senha varchar(45);
 
+alter table host
+add column vistoMensagem boolean;
+
 delete from host where idHost = 15;
 
 select * from host;
