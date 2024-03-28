@@ -5,7 +5,7 @@
  */
 package view;
 
-import DAO.jogoDAO;
+
 import DAO.postDAO;
 import VO.jogoVO;
 import VO.loginVO;
@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import servicos.PostServicos;
 
 /**
  *
@@ -38,12 +39,12 @@ public class GUIPostar extends javax.swing.JFrame {
     private void prencher(){
      limpar();
      try {
-            postDAO PDAO = new postDAO();
-
+            
+            PostServicos ps = new servicos.ServicosFactory().getPostServicos();
             ArrayList<postVO> crod = new ArrayList<>();
             
             
-            crod = PDAO.mostrarPost();
+            crod = ps.mostrarPost();
             
             for ( int i = 0; i < crod.size(); i++) {
                 dtm.addRow(new String[] {
@@ -77,8 +78,8 @@ public class GUIPostar extends javax.swing.JFrame {
              ArrayList<postVO> prod = new ArrayList<>();
                 
                 //Recebendo o ArrayList cheio no produto
-                postDAO PDAO = new postDAO();
-                prod = PDAO.filtarPost(query);
+                PostServicos ps = new servicos.ServicosFactory().getPostServicos();
+                prod = ps.filtarPost(query);
                 
                 for( int i = 0; i < prod.size(); i++){
                     dtm.addRow(new String[] {
@@ -105,8 +106,9 @@ public class GUIPostar extends javax.swing.JFrame {
          pvo.setJogo(jtfJogo.getText());
             if(pvo.getNumPost() < pvo.getNumPostPerm()){
             
-         postDAO pdao = new postDAO();
-         int idPost = pdao.postar(pvo);
+        
+         PostServicos ps = new servicos.ServicosFactory().getPostServicos();
+         int idPost = ps.postar(pvo);
          int [] postCriados =pvo.getIdPostCreated();
          
        int p = pvo.getNumPost();
@@ -131,11 +133,12 @@ public class GUIPostar extends javax.swing.JFrame {
                 
                 String idPost =   (String) jtTabela.getValueAt(linha, 0);
                 loginVO lvo = new loginVO();
-                postDAO PDAO = new postDAO();
-                String rsEm = PDAO.permitirDel(Integer.parseInt(idPost));
+               
+                PostServicos ps = new servicos.ServicosFactory().getPostServicos();
+                String rsEm = ps.permitirDeletarPost(Integer.parseInt(idPost));
             
                 if(rsEm.equals(lvo.getEm())){
-                PDAO.deletarPost(Integer.parseInt(idPost));
+                ps.deletarPost(Integer.parseInt(idPost));
                 
                 postVO pvo = new postVO();
                 pvo.setNumPost(pvo.getNumPost()- 1);
@@ -160,9 +163,10 @@ public class GUIPostar extends javax.swing.JFrame {
     public void deletarTodosPosts() throws SQLException{
      postVO pvo = new postVO();
      int[] posts = pvo.getIdPostCreated();
-     postDAO pdao = new postDAO();
+     
+     PostServicos ps = new servicos.ServicosFactory().getPostServicos();
      for(int i = 0; i <= pvo.getNumPost();i++){
-     pdao.deletarPost(posts[i]);
+     ps.deletarPost(posts[i]);
      posts[i] = 0;
      pvo.setNumPost(0);
      }

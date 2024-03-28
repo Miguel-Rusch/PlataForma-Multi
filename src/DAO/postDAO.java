@@ -145,7 +145,7 @@ public class postDAO {
             con.close();
         }//fim da finally
     }
-    public String permitirDel(int idPost) throws SQLException{
+    public String permitirDeletarPost(int idPost) throws SQLException{
     Connection con = new ConexaoBanco().getConexao();
 
         try {
