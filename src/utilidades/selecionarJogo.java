@@ -22,14 +22,16 @@ public class selecionarJogo {
      
         if(idJogo.equals("3")){
             
-          
+            
             
             HostServicos hs = new servicos.ServicosFactory().getHostServicos();
             hs.botarJogo("3");
         
             guessNumber gn = new guessNumber();
          try {
+              System.out.println("11111111111111");
              gn.game();
+            
          } catch (InterruptedException ex) {
              Logger.getLogger(selecionarJogo.class.getName()).log(Level.SEVERE, null, ex);
          }

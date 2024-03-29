@@ -240,7 +240,7 @@ public class hostDAO {
         }//fim do try catch finally
       }
       
-    public String verJogo() throws SQLException{
+    public String[] verJogo() throws SQLException{
        
         Connection con = new ConexaoBanco().getConexao();
         hostVO hvo = new hostVO();
@@ -275,12 +275,14 @@ public class hostDAO {
             
             pst.execute();
             pst.close();
+            resultado[0] = "true";
             resultado[1] = jogo;
            }else{
+           resultado[0] = "false";    
            resultado[1] = "";
            }
     
-           return resultado[1];
+           return resultado;
         
           
             
@@ -291,7 +293,7 @@ public class hostDAO {
         }//fim do try catch finally
     }  
     
-    public String verMensagem() throws SQLException{
+    public String[] verMensagem() throws SQLException{
        
         Connection con = new ConexaoBanco().getConexao();
         hostVO hvo = new hostVO();
@@ -326,13 +328,15 @@ public class hostDAO {
             pst.execute();
             pst.close();
             resultado[0] = mensagem;
+            resultado[1] = "true";
            }else{
            resultado[0] = "";
+           resultado[1] = "false";
            }
            
           
     
-           return resultado[0];
+           return resultado;
         
           
             

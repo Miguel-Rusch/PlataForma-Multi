@@ -54,12 +54,12 @@ public class HostServicos {
         return hdao.verificarConexao();
     }
     
-    public String verJogo() throws SQLException{
+    public String[] verJogo() throws SQLException{
         hostDAO hdao = new DAOFactory().getHostDAO();
         return hdao.verJogo();
     }
     
-    public String verMensagem() throws SQLException{
+    public String[] verMensagem() throws SQLException{
         hostDAO hdao = new DAOFactory().getHostDAO();
         return hdao.verMensagem();
     }
