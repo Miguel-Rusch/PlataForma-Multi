@@ -13,8 +13,8 @@ public class hostVO {
     private int idHost,idHostConect;
     private String jogada,jogadaAlter;
     private boolean conect;
-    public static boolean loop;
-    public static int hostConect;
+    public static boolean loop,procurandoHost;
+    public static int hostConect, abertoJogos;
 
     public int getIdHost() {
         return idHost;

@@ -40,10 +40,7 @@ public class GUICadastro extends javax.swing.JFrame {
             throw new GetOptsException(validar);
             }
             
-            if(!conv.verificarTexto(jtfUsuario.getText())){
-            throw new GetOptsException("Usuário inválido");
-            }
-
+           
         
         loginVO LVO = new loginVO();
         

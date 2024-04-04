@@ -148,7 +148,7 @@ public class GUILog extends javax.swing.JFrame {
         LVO.setOnline(true);
         princ.setVisible(true);
         dispose();
-        JOptionPane.showMessageDialog(null,"Login feito com sucesso!");
+       
             }else{
                 //Enviar mensagem de incorreto
                 JOptionPane.showMessageDialog(null, "Login ou Senha inválidos! ");
