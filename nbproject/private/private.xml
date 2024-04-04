@@ -5,8 +5,14 @@
         <group>
             <file>file:/C:/Users/182220058/Documents/NetBeansProjects/PI/src/VO/hostVO.java</file>
             <file>file:/C:/Users/182220058/Documents/NetBeansProjects/PI/src/DAO/hostDAO.java</file>
-            <file>file:/C:/Users/182220058/Documents/NetBeansProjects/PI/src/utilidades/conversao.java</file>
+            <file>file:/C:/Users/182220058/Documents/NetBeansProjects/PI/src/view/GUILog.java</file>
+            <file>file:/C:/Users/182220058/Documents/NetBeansProjects/PI/src/servicos/HostServicos.java</file>
+            <file>file:/C:/Users/182220058/Documents/NetBeansProjects/PI/src/view/GUIPesquisar.java</file>
+            <file>file:/C:/Users/182220058/Documents/NetBeansProjects/PI/src/jogoSimples/guessNumber.java</file>
+            <file>file:/C:/Users/182220058/Documents/NetBeansProjects/PI/src/view/GUIHost.java</file>
+            <file>file:/C:/Users/182220058/Documents/NetBeansProjects/PI/src/utilidades/selecionarJogo.java</file>
             <file>file:/C:/Users/182220058/Documents/NetBeansProjects/PI/src/view/GUIPerf.java</file>
+            <file>file:/C:/Users/182220058/Documents/NetBeansProjects/PI/src/persistenci/ConexaoBanco.java</file>
         </group>
     </open-files>
 </project-private>
