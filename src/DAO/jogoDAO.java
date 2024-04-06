@@ -49,11 +49,11 @@ public class jogoDAO {
         }
     }//fim do método buscarProduto
      
-     public ArrayList<jogoVO> filtarJogos(String query) throws SQLException {
+     public ArrayList<jogoVO> filtarJogos(String query,String quer) throws SQLException {
         Connection con = new ConexaoBanco().getConexao();
 
         try {
-            String sql = "Select * from jogo " + query;
+            String sql = "Select * from jogo " + query + " " + quer;
             //query
             PreparedStatement pstm = con.prepareStatement(sql);
 
@@ -81,37 +81,7 @@ public class jogoDAO {
         }
     }//fim do método buscarProduto
     
-     public ArrayList<jogoVO> acessoJogos(String query) throws SQLException {
-        Connection con = new ConexaoBanco().getConexao();
-
-        try {
-            String sql = "Select * from jogo order by acessos " + query;
-            //query
-            PreparedStatement pstm = con.prepareStatement(sql);
-
-            ResultSet rs = pstm.executeQuery();
-            ArrayList<jogoVO> pro = new ArrayList<>();
-
-            while (rs.next()) {
-                jogoVO JVO = new jogoVO();
-
-                JVO.setIdJogo(rs.getInt("idJogo"));
-                JVO.setNome(rs.getString("nome"));
-                JVO.setTipo(rs.getString("tipo"));
-                JVO.setAcessos(rs.getInt("acessos"));
-
-                pro.add(JVO);
-            }//fim do while
-            pstm.close();
-
-            return pro;
-
-        } catch (SQLException se) {
-            throw new SQLException("Erro ao ver os acessos do jogos! " + se.getMessage());
-        } finally {
-            con.close();
-        }
-    }//fim do método buscarProduto
+     
      
 
     

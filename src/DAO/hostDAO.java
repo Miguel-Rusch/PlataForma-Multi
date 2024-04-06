@@ -191,7 +191,7 @@ public class hostDAO {
     public void botarJogo(String idJogo) throws SQLException{
         
         Connection con = new ConexaoBanco().getConexao();
-        System.out.println("e");
+    
         try {
             
             String sql = "update host set vistoJogo = true,jogo = ? where idHost = ?";
@@ -240,7 +240,7 @@ public class hostDAO {
         }//fim do try catch finally
       }
       
-    public String verJogo() throws SQLException{
+    public String[] verJogo() throws SQLException{
        
         Connection con = new ConexaoBanco().getConexao();
         hostVO hvo = new hostVO();
@@ -264,23 +264,25 @@ public class hostDAO {
              vistoJogo = rs.getBoolean("vistoJogo");
             jogo =  rs.getString("jogo");
            }
-          
-           
-           if(vistoJogo){
-            String sq = "update host set vistoJogo = false where idHost = ?";   
+          String sq = "update host set vistoJogo = false where idHost like '" + hvo.hostConect+"'";   
             PreparedStatement pst = con.prepareStatement(sq);
             
-            pst.setInt(1, hvo.hostConect);
+            
             
             
             pst.execute();
             pst.close();
+           
+           if(vistoJogo){
+            
+            resultado[0] = "true";
             resultado[1] = jogo;
            }else{
+           resultado[0] = "false";    
            resultado[1] = "";
            }
     
-           return resultado[1];
+           return resultado;
         
           
             
@@ -291,12 +293,12 @@ public class hostDAO {
         }//fim do try catch finally
     }  
     
-    public String verMensagem() throws SQLException{
+    public String[] verMensagem() throws SQLException{
        
         Connection con = new ConexaoBanco().getConexao();
         hostVO hvo = new hostVO();
         try {
-        
+            System.out.println(hvo.hostConect + " 301 hostDAO");
             String sql = "select * from host where idHost like '"+hvo.hostConect+"'";
 
             PreparedStatement pstm = con.prepareStatement(sql);
@@ -319,20 +321,22 @@ public class hostDAO {
            if(vistoMensagem){
             String sq = "update host set vistoMensagem = false where idHost = ?";   
             PreparedStatement pst = con.prepareStatement(sq);
-            
+               System.out.println("é falso");
             pst.setInt(1, hvo.hostConect);
             
             
             pst.execute();
             pst.close();
             resultado[0] = mensagem;
+            resultado[1] = "true";
            }else{
            resultado[0] = "";
+           resultado[1] = "false";
            }
            
           
     
-           return resultado[0];
+           return resultado;
         
           
             

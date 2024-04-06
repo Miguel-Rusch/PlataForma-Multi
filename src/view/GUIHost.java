@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import servicos.ChatServicos;
+import servicos.HostServicos;
 import utilidades.selecionarJogo;
 
 /**
@@ -24,21 +26,24 @@ public class GUIHost extends javax.swing.JFrame {
      */
     public GUIHost() {
         initComponents();
+        
     }
     public void criarHost() throws SQLException{
-        hostDAO HDAO = new hostDAO();
-        int host= HDAO.mostrarHost();
+       
+        HostServicos hs = new servicos.ServicosFactory().getHostServicos();
+        int host= hs.mostrarHost();
         if(host == 0){
-          HDAO.criarHost();  
-          host = HDAO.mostrarHost();
+          hs.criarHost();  
+          host = hs.mostrarHost();
         }
         
         jtfNumHost.setText(""+host);
         verificarConexao();
     }
     public void conectarHost() throws SQLException{
-        hostDAO HDAO = new hostDAO();
-      boolean conectado = HDAO.conectarHost(Integer.parseInt(jtfConectar.getText()));
+        
+        HostServicos hs = new servicos.ServicosFactory().getHostServicos();
+      boolean conectado = hs.conectarHost(Integer.parseInt(jtfConectar.getText()));
        if(conectado){
        hostVO hvo = new hostVO();
             hvo.loop = true;    
@@ -46,8 +51,9 @@ public class GUIHost extends javax.swing.JFrame {
        }
     }
     public void desconectarhost() throws SQLException{
-        hostDAO HDAO = new hostDAO();
-        HDAO.desconectarHost();
+        
+        HostServicos hs = new servicos.ServicosFactory().getHostServicos();
+        hs.desconectarHost();
         hostVO hvo = new hostVO();
             hvo.loop = false;
         
@@ -59,7 +65,20 @@ public class GUIHost extends javax.swing.JFrame {
     @Override
     public void run() {
         hostVO hvo = new hostVO();
-        hostDAO hdao = new hostDAO();
+      
+        HostServicos hs = new servicos.ServicosFactory().getHostServicos();
+        ChatServicos cs = new servicos.ServicosFactory().getChatServicos();
+        
+        GUIChat guic = new GUIChat();
+        
+       
+     guic.setVisible(true);
+        try {
+            cs.criarConexao();
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIHost.class.getName()).log(Level.SEVERE, null, ex);
+        }
+     guic.gerarLabel(guic.panel, "21", 1);
     boolean running = hvo.loop;
 int FPS = 60;
 int UPS =20;
@@ -69,7 +88,7 @@ final double timeF = 1000000000 / FPS;
 double deltaU = 0, deltaF = 0;
 int frames = 0, ticks = 0;
 long timer = System.currentTimeMillis();
-String jogo = null;
+String jogo[] = null;
 String[] mensagem = new String[8];
     while (running) {
         running = hvo.loop;
@@ -83,16 +102,20 @@ String[] mensagem = new String[8];
             try {
                 //Aqui que eu vou updatar
                
-             jogo = hdao.verJogo();
+             jogo = hs.verJogo();
         
             } catch (SQLException ex) {
                 Logger.getLogger(GUIHost.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            if(!jogo.equals("")){
+            if(jogo[0].equals("true") ){
+                jogo[0] = "false";
+                
                 selecionarJogo slcJogo = new selecionarJogo();
+                  
                 try {
-                    slcJogo.acessoJogos(jogo);
+                    slcJogo.acessoJogos(jogo[1]);
+                  
                 } catch (SQLException ex) {
                     Logger.getLogger(GUIHost.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -125,7 +148,8 @@ String[] mensagem = new String[8];
 
     @Override
     public void run() {
-       hostDAO hdao = new hostDAO();
+         hostVO hvo = new hostVO();
+       HostServicos hs = new servicos.ServicosFactory().getHostServicos();
     boolean running = false;
 int FPS = 60;
 int UPS =20;
@@ -137,7 +161,7 @@ int frames = 0, ticks = 0;
 long timer = System.currentTimeMillis();
 
     while (!running) {
-        
+        hvo.procurandoHost = true;
         long currentTime = System.nanoTime();
         deltaU += (currentTime - initialTime) / timeU;
         deltaF += (currentTime - initialTime) / timeF;
@@ -146,7 +170,8 @@ long timer = System.currentTimeMillis();
         if (deltaU >= 1) {
            
             try {
-                running = hdao.verificarConexao();
+                running = hs.verificarConexao();
+                
             } catch (SQLException ex) {
                 Logger.getLogger(GUIHost.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -165,8 +190,9 @@ long timer = System.currentTimeMillis();
 
     }
     JOptionPane.showMessageDialog(null, "Conectou-se");
-    hostVO hvo = new hostVO();
+  
     hvo.loop = true;
+    hvo.procurandoHost = false;
     criarLoop();
     
     }
@@ -195,7 +221,6 @@ long timer = System.currentTimeMillis();
         jbtConectar = new javax.swing.JButton();
         jtfConectar = new javax.swing.JTextField();
         jtbDesconectar = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
 
         setTitle("Host");
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -230,27 +255,18 @@ long timer = System.currentTimeMillis();
             }
         });
 
-        jButton1.setText("TESTE MENSAGEM");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(87, 87, 87)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jtbDesconectar)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jButton1)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jbtConectar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jbCriarHost, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(39, 39, 39)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jbtConectar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jbCriarHost, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jtbDesconectar))
+                .addGap(59, 59, 59)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jtfNumHost)
                     .addComponent(jtfConectar, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE))
@@ -267,11 +283,9 @@ long timer = System.currentTimeMillis();
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jbtConectar)
                     .addComponent(jtfConectar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29)
+                .addGap(27, 27, 27)
                 .addComponent(jtbDesconectar)
-                .addGap(33, 33, 33)
-                .addComponent(jButton1)
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addContainerGap(94, Short.MAX_VALUE))
         );
 
         pack();
@@ -316,15 +330,6 @@ long timer = System.currentTimeMillis();
         }
     }//GEN-LAST:event_jtbDesconectarActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-      hostDAO hdao = new hostDAO();
-        try {
-            hdao.registrarJogada("oila");
-        } catch (SQLException ex) {
-            Logger.getLogger(GUIHost.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -362,7 +367,6 @@ long timer = System.currentTimeMillis();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jbCriarHost;
     private javax.swing.JButton jbtConectar;
     private javax.swing.JButton jtbDesconectar;

@@ -34,7 +34,7 @@ public class loginDAO {
             pstm.close();
 
         } catch (SQLException se) {
-            throw new SQLException("Erro no Cadastro!");
+            throw new SQLException("Erro no Cadastro!" + se.getMessage());
         } finally {
             con.close();
         }//fim do try catch finally

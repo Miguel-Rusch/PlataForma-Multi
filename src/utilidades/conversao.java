@@ -104,5 +104,19 @@ public class conversao {
         
     }//fecha método
     
+    public static String formatacaoMenagem(String mensagem,int usuario){
+        int cont = 7;
+        //12 tabs
+        if(usuario == 1){
+        for(int i = 0;i <= cont;i++){
+        mensagem ="     "+mensagem;
+        }
+        }else{
+            
+        }
+        
+    return mensagem;
+    } 
+    
     
 }
