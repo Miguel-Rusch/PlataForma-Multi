@@ -27,7 +27,7 @@ public class hostDAO {
         Connection con = new ConexaoBanco().getConexao();
         loginVO lvo = new loginVO();
         try {
-            String sql = "INSERT INTO host VALUES (null, false, null, null,null,?,?,false)";
+            String sql = "INSERT INTO host VALUES (null, false, null, null,null,?,?,false,false)";
 
             PreparedStatement pstm = con.prepareStatement(sql);
              pstm.setString(1, lvo.getEm());
@@ -126,6 +126,7 @@ public class hostDAO {
         public void desconectarHost()throws SQLException{
          Connection con = new ConexaoBanco().getConexao();
         loginVO lvo = new loginVO();
+        
         try {
             String sql = "delete from host where idHost = ?";
 
@@ -135,7 +136,8 @@ public class hostDAO {
 
             pstm.execute();
             pstm.close();
-            
+//            chatDAO cdao = new chatDAO();
+//            cdao.fecharChat();
         } catch (SQLException se) {
             throw new SQLException("Erro em desconectar um host!");
         } finally {
@@ -148,7 +150,7 @@ public class hostDAO {
         Connection con = new ConexaoBanco().getConexao();
         loginVO lvo = new loginVO();
         try {
-            String sql = "INSERT INTO host VALUES (null, true, null, null,?,?,null,false)";
+            String sql = "INSERT INTO host VALUES (null, true, null, null,?,?,null,false,false)";
 
             PreparedStatement pstm = con.prepareStatement(sql);
              pstm.setString(1, host+"");
@@ -166,9 +168,9 @@ public class hostDAO {
 
     }//
         
-    public void testemensagem() throws SQLException {
+    public void registrarJogada(String mensagem) throws SQLException {
         
-        String mensagem = JOptionPane.showInputDialog("Digite uma senha para o seu host!");
+        
         Connection con = new ConexaoBanco().getConexao();
         loginVO lvo = new loginVO();
         try {
@@ -182,12 +184,34 @@ public class hostDAO {
             pstm.close();
             
         } catch (SQLException se) {
-            throw new SQLException("Erro em criar um host!" + se.getMessage());
+            throw new SQLException("Erro em registar a jogada!" + se.getMessage());
         } finally {
             con.close();
         }//fim do try catch finally
 
     }//   
+    public void botarJogo(String idJogo) throws SQLException{
+        
+        Connection con = new ConexaoBanco().getConexao();
+    
+        try {
+            
+            String sql = "update host set vistoJogo = true,jogo = ? where idHost = ?";
+            //update host set conect = true,idHostConect = ? 
+            PreparedStatement pstm = con.prepareStatement(sql);
+             pstm.setString(1, idJogo);
+             pstm.setInt(2, mostrarHost());
+
+            pstm.execute();
+            pstm.close();
+            
+        } catch (SQLException se) {
+            throw new SQLException("Erro em botar o jogo para o outro!" + se.getMessage());
+        } finally {
+            con.close();
+        }//fim do try catch finally
+    }
+    
     
       public boolean verificarConexao()throws SQLException{
         Connection con = new ConexaoBanco().getConexao();
@@ -218,7 +242,7 @@ public class hostDAO {
         }//fim do try catch finally
       }
       
-    public String verNovidade() throws SQLException{
+    public String[] verJogo() throws SQLException{
        
         Connection con = new ConexaoBanco().getConexao();
         hostVO hvo = new hostVO();
@@ -230,29 +254,91 @@ public class hostDAO {
              
 
            ResultSet rs = pstm.executeQuery();
-           boolean visto = false;
-           String mensagem = "";
+           
+           String[] resultado = new String[8];
+           
+           
+           boolean vistoJogo = false;
+          
+           String jogo = "";
            while(rs.next()){
-            visto = rs.getBoolean("vistoMensagem");
-             mensagem = rs.getString("jogada");
-            
+           
+             vistoJogo = rs.getBoolean("vistoJogo");
+            jogo =  rs.getString("jogo");
            }
-           if(visto){
-            String sq = "update host set vistoMensagem = false where idHost = ?";   
+          String sq = "update host set vistoJogo = false where idHost like '" + hvo.hostConect+"'";   
             PreparedStatement pst = con.prepareStatement(sq);
             
+            
+            
+            
+            pst.execute();
+            pst.close();
+           
+           if(vistoJogo){
+            
+            resultado[0] = "true";
+            resultado[1] = jogo;
+           }else{
+           resultado[0] = "false";    
+           resultado[1] = "";
+           }
+    
+           return resultado;
+        
+          
+            
+        } catch (SQLException se) {
+            throw new SQLException("Erro ao ver a mensagem!"+se.getMessage());
+        } finally {
+            con.close();
+        }//fim do try catch finally
+    }  
+    
+    public String[] verMensagem() throws SQLException{
+       
+        Connection con = new ConexaoBanco().getConexao();
+        hostVO hvo = new hostVO();
+        try {
+            System.out.println(hvo.hostConect + " 301 hostDAO");
+            String sql = "select * from host where idHost like '"+hvo.hostConect+"'";
+
+            PreparedStatement pstm = con.prepareStatement(sql);
+             
+
+           ResultSet rs = pstm.executeQuery();
+           
+           String[] resultado = new String[8];
+           
+           boolean vistoMensagem = false;
+           
+           String mensagem = "";
+           
+           while(rs.next()){
+            vistoMensagem = rs.getBoolean("vistoMensagem");
+             mensagem = rs.getString("jogada");
+             
+            
+           }
+           if(vistoMensagem){
+            String sq = "update host set vistoMensagem = false where idHost = ?";   
+            PreparedStatement pst = con.prepareStatement(sq);
+               System.out.println("é falso");
             pst.setInt(1, hvo.hostConect);
             
             
             pst.execute();
             pst.close();
-            
+            resultado[0] = mensagem;
+            resultado[1] = "true";
            }else{
-           return "";
+           resultado[0] = "";
+           resultado[1] = "false";
            }
-           return mensagem;
-    
            
+          
+    
+           return resultado;
         
           
             

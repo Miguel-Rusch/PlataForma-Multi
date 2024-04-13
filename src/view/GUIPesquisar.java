@@ -5,7 +5,9 @@
  */
 package view;
 
+
 import DAO.jogoDAO;
+import VO.hostVO;
 import VO.jogoVO;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,6 +16,9 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import jogoSimples.JogoDaVelha;
+import jogoSimples.guessNumber;
+import servicos.JogoServicos;
+import utilidades.selecionarJogo;
 
 /**
  *
@@ -36,12 +41,13 @@ public class GUIPesquisar extends javax.swing.JFrame {
     private void prencherTabela(){
         limparTabela();
          try {
-            jogoDAO JDAO = new jogoDAO();
+            
+             JogoServicos js = new servicos.ServicosFactory().getJogoServicos();
 
             ArrayList<jogoVO> crod = new ArrayList<>();
             
             
-            crod = JDAO.mostrarJogos();
+            crod = js.mostrarJogos();
             
             for ( int i = 0; i < crod.size(); i++) {
                 dtm.addRow(new String[] { 
@@ -71,11 +77,28 @@ public class GUIPesquisar extends javax.swing.JFrame {
                 }else if(pesquisa.equals("Tipo")){
                     query = "where tipo like '%" + jtfPesquisar.getText() + "%' ";
                 }
+            String quer = null;
+       
+        
+        
+        if(jcMaisPopular.isSelected()){
+            quer = "order by acessos DESC";
+        }else if(jcMenosPopular.isSelected()){
+            quer = "order by acessos ASC";
+        }else if(jcbOrdemA.isSelected()){
+            quer = "order by nome ASC";
+        }else if(jcbOrdemB.isSelected()){
+            quer = "order by nome DESC";
+        }else{
+            quer = "";
+        }
+            
+            
              ArrayList<jogoVO> prod = new ArrayList<>();
                 
                 //Recebendo o ArrayList cheio no produto
-                jogoDAO JDAO = new jogoDAO();
-                prod = JDAO.filtarJogos(query);
+                JogoServicos js = new servicos.ServicosFactory().getJogoServicos();
+                prod = js.filtarJogos(query,quer);
                 
                 for( int i = 0; i < prod.size(); i++){
                     dtm.addRow(new String[] {
@@ -91,41 +114,19 @@ public class GUIPesquisar extends javax.swing.JFrame {
         }
     
     }
-    private void acessosJogo() throws SQLException{
-        String query = null;
-        boolean pular = false;
-        jogoDAO jDAO = new jogoDAO();
-        if(jcMaisPopular.isSelected()){
-            query = "DESC";
-        }else if(jcMenosPopular.isSelected()){
-            query = "ASC";
-        }else{
-            pular = true;
-        }
-        if(!pular){
-            limparTabela();
-            ArrayList<jogoVO> prod = new ArrayList<>();
-            prod = jDAO.acessoJogos(query);
-            
-            for( int i = 0; i < prod.size(); i++){
-                    dtm.addRow(new String[] {
-                        String.valueOf(prod.get(i).getIdJogo()),
-                        String.valueOf(prod.get(i).getNome() ),
-                        String.valueOf(prod.get(i).getTipo()),
-                        String.valueOf(prod.get(i).getAcessos()),
-                    });
-                }//fecha o laço for
-                
-                //Adicionando o modelo de tablea com os dados na tabela jtProduto
-                jtTabela.setModel(dtm);
-        }else{
-            limparTabela();
-            prencherTabela();
-        }
-    }
+    
     
     private void limparTabela(){
         dtm.setNumRows(0);
+    }
+    
+    private void irJogo() throws SQLException{
+         selecionarJogo slcJogo = new selecionarJogo();
+         slcJogo.botarJogo(jtfIrJogo.getText());
+         slcJogo.acessoJogos(jtfIrJogo.getText());
+      
+        
+    
     }
 
     /**
@@ -141,12 +142,14 @@ public class GUIPesquisar extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jcClasses = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        jtfIrJogo = new javax.swing.JTextField();
         jbtIR = new javax.swing.JButton();
         jcMaisPopular = new javax.swing.JCheckBox();
         jcMenosPopular = new javax.swing.JCheckBox();
         jScrollPane1 = new javax.swing.JScrollPane();
         jtTabela = new javax.swing.JTable();
+        jcbOrdemA = new javax.swing.JCheckBox();
+        jcbOrdemB = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -215,33 +218,49 @@ public class GUIPesquisar extends javax.swing.JFrame {
         jtTabela.setToolTipText("");
         jScrollPane1.setViewportView(jtTabela);
 
+        jcbOrdemA.setText("A-Z");
+        jcbOrdemA.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jcbOrdemAActionPerformed(evt);
+            }
+        });
+
+        jcbOrdemB.setText("Z-A");
+        jcbOrdemB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jcbOrdemBActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(jLabel2)
-                        .addGap(27, 27, 27)
-                        .addComponent(jcClasses, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(38, 38, 38)
-                        .addComponent(jtfPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 424, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(46, 46, 46)
+                .addGap(33, 33, 33)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jcMaisPopular)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jcMenosPopular)))
+                        .addGap(18, 18, 18)
+                        .addComponent(jcMenosPopular)
+                        .addGap(18, 18, 18)
+                        .addComponent(jcbOrdemA)
+                        .addGap(18, 18, 18)
+                        .addComponent(jcbOrdemB))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 424, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel2)
+                            .addGap(27, 27, 27)
+                            .addComponent(jcClasses, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(38, 38, 38)
+                            .addComponent(jtfPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(18, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jtfIrJogo, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jbtIR)
                 .addGap(187, 187, 187))
@@ -257,13 +276,15 @@ public class GUIPesquisar extends javax.swing.JFrame {
                 .addGap(36, 36, 36)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jcMaisPopular)
-                    .addComponent(jcMenosPopular))
+                    .addComponent(jcMenosPopular)
+                    .addComponent(jcbOrdemA)
+                    .addComponent(jcbOrdemB))
                 .addGap(47, 47, 47)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jbtIR)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtfIrJogo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addGap(70, 70, 70))
         );
@@ -280,32 +301,38 @@ public class GUIPesquisar extends javax.swing.JFrame {
     }//GEN-LAST:event_jcClassesActionPerformed
 
     private void jcMaisPopularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcMaisPopularActionPerformed
-      if(jcMaisPopular.isSelected() && jcMenosPopular.isSelected()){
+      
             jcMenosPopular.setSelected(false);
-        }
+            jcbOrdemA.setSelected(false);
+            jcbOrdemB.setSelected(false);
         try {
-            
-            acessosJogo();
+            limparTabela();
+            filtarJogos();
         } catch (SQLException ex) {
             Logger.getLogger(GUIPesquisar.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jcMaisPopularActionPerformed
 
     private void jcMenosPopularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcMenosPopularActionPerformed
-      if(jcMaisPopular.isSelected() && jcMenosPopular.isSelected()){
-            jcMaisPopular.setSelected(false);
-        }
-      try {
       
-            acessosJogo();
+            jcMaisPopular.setSelected(false);
+            jcbOrdemA.setSelected(false);
+            jcbOrdemB.setSelected(false);
+        
+      try {
+            limparTabela();
+            filtarJogos();
         } catch (SQLException ex) {
             Logger.getLogger(GUIPesquisar.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jcMenosPopularActionPerformed
 
     private void jbtIRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtIRActionPerformed
-    
-    
+        try {
+            irJogo();
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIPesquisar.class.getName()).log(Level.SEVERE, null, ex);
+        }
             
     }//GEN-LAST:event_jbtIRActionPerformed
 
@@ -317,6 +344,33 @@ public class GUIPesquisar extends javax.swing.JFrame {
             Logger.getLogger(GUIPesquisar.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jtfPesquisarKeyReleased
+
+    private void jcbOrdemAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbOrdemAActionPerformed
+        jcMenosPopular.setSelected(false);
+        jcMaisPopular.setSelected(false);
+        jcbOrdemB.setSelected(false);
+        
+        try {
+            limparTabela();
+            filtarJogos();
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIPesquisar.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_jcbOrdemAActionPerformed
+
+    private void jcbOrdemBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbOrdemBActionPerformed
+        jcMenosPopular.setSelected(false);
+        jcMaisPopular.setSelected(false);
+        jcbOrdemA.setSelected(false);
+        
+        try {
+            limparTabela();
+            filtarJogos();
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIPesquisar.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jcbOrdemBActionPerformed
 
     /**
      * @param args the command line arguments
@@ -357,12 +411,14 @@ public class GUIPesquisar extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JButton jbtIR;
     private javax.swing.JComboBox<String> jcClasses;
     private javax.swing.JCheckBox jcMaisPopular;
     private javax.swing.JCheckBox jcMenosPopular;
+    private javax.swing.JCheckBox jcbOrdemA;
+    private javax.swing.JCheckBox jcbOrdemB;
     private javax.swing.JTable jtTabela;
+    private javax.swing.JTextField jtfIrJogo;
     private javax.swing.JTextField jtfPesquisar;
     // End of variables declaration//GEN-END:variables
 }

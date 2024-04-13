@@ -34,6 +34,8 @@ public class GUIPrincipal extends javax.swing.JFrame {
 //         }
          
     }
+    
+  
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -50,6 +52,7 @@ public class GUIPrincipal extends javax.swing.JFrame {
         jbPesquisar = new javax.swing.JButton();
         jbHost = new javax.swing.JButton();
         jbPostar = new javax.swing.JButton();
+        jtbChat = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jpmPerfil = new javax.swing.JMenuItem();
@@ -82,24 +85,37 @@ public class GUIPrincipal extends javax.swing.JFrame {
             }
         });
 
+        jtbChat.setText("Chat");
+        jtbChat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtbChatActionPerformed(evt);
+            }
+        });
+
         jDesktopPane1.setLayer(jbPesquisar, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jDesktopPane1.setLayer(jbHost, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jDesktopPane1.setLayer(jbPostar, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jDesktopPane1.setLayer(jtbChat, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
         jDesktopPane1.setLayout(jDesktopPane1Layout);
         jDesktopPane1Layout.setHorizontalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                .addGap(82, 82, 82)
-                .addComponent(jbPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 300, Short.MAX_VALUE)
-                .addComponent(jbHost, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
+                .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jDesktopPane1Layout.createSequentialGroup()
+                        .addGap(82, 82, 82)
+                        .addComponent(jbPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jDesktopPane1Layout.createSequentialGroup()
+                        .addGap(306, 306, 306)
+                        .addComponent(jbPostar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
+                .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jbHost, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
+                        .addComponent(jtbChat)
+                        .addGap(17, 17, 17)))
                 .addGap(159, 159, 159))
-            .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                .addGap(306, 306, 306)
-                .addComponent(jbPostar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -112,7 +128,9 @@ public class GUIPrincipal extends javax.swing.JFrame {
                         .addGap(50, 50, 50)
                         .addComponent(jbHost, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(102, 102, 102)
-                .addComponent(jbPostar, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jbPostar, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtbChat))
                 .addContainerGap(243, Short.MAX_VALUE))
         );
 
@@ -128,7 +146,7 @@ public class GUIPrincipal extends javax.swing.JFrame {
         );
         jDesktopPane2Layout.setVerticalGroup(
             jDesktopPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jDesktopPane1)
+            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         jMenuBar1.setBackground(new java.awt.Color(0, 0, 0));
@@ -214,6 +232,13 @@ public class GUIPrincipal extends javax.swing.JFrame {
            
     }//GEN-LAST:event_formWindowClosing
 
+    private void jtbChatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtbChatActionPerformed
+     GUIChat guic = new GUIChat();
+     
+     guic.setVisible(true);
+     
+    }//GEN-LAST:event_jtbChatActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -250,8 +275,8 @@ public class GUIPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JDesktopPane jDesktopPane1;
-    private javax.swing.JDesktopPane jDesktopPane2;
+    public javax.swing.JDesktopPane jDesktopPane1;
+    public static javax.swing.JDesktopPane jDesktopPane2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPopupMenu jPopupMenu1;
@@ -259,5 +284,6 @@ public class GUIPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton jbPesquisar;
     private javax.swing.JButton jbPostar;
     private javax.swing.JMenuItem jpmPerfil;
+    private javax.swing.JButton jtbChat;
     // End of variables declaration//GEN-END:variables
 }

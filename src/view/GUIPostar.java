@@ -5,18 +5,23 @@
  */
 package view;
 
+
 import DAO.jogoDAO;
 import DAO.postDAO;
+import VO.hostVO;
 import VO.jogoVO;
 import VO.loginVO;
 import VO.postVO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import servicos.HostServicos;
+import servicos.PostServicos;
 
 /**
  *
@@ -34,16 +39,17 @@ public class GUIPostar extends javax.swing.JFrame {
     public GUIPostar() {
         initComponents();
         prencher();
+        preencherJogojcb();
     }
     private void prencher(){
      limpar();
      try {
-            postDAO PDAO = new postDAO();
-
+            
+            PostServicos ps = new servicos.ServicosFactory().getPostServicos();
             ArrayList<postVO> crod = new ArrayList<>();
             
             
-            crod = PDAO.mostrarPost();
+            crod = ps.mostrarPost();
             
             for ( int i = 0; i < crod.size(); i++) {
                 dtm.addRow(new String[] {
@@ -77,8 +83,8 @@ public class GUIPostar extends javax.swing.JFrame {
              ArrayList<postVO> prod = new ArrayList<>();
                 
                 //Recebendo o ArrayList cheio no produto
-                postDAO PDAO = new postDAO();
-                prod = PDAO.filtarPost(query);
+                PostServicos ps = new servicos.ServicosFactory().getPostServicos();
+                prod = ps.filtarPost(query);
                 
                 for( int i = 0; i < prod.size(); i++){
                     dtm.addRow(new String[] {
@@ -95,18 +101,23 @@ public class GUIPostar extends javax.swing.JFrame {
     }
     private void postar() throws SQLException{
         loginVO lvo = new loginVO();
-        if(jtfJogo.getText().equals("")){
-        JOptionPane.showMessageDialog(null,"Escreva um jogo");
+        if(jcbJogo.getSelectedItem().equals("Selecione...")){
+        JOptionPane.showMessageDialog(null,"Selecione um jogo");
         }else if(!lvo.isOnline()){
             JOptionPane.showMessageDialog(null,"Não pode criar um post pois está em modo offline");
+        }else if(!hostVO.procurandoHost){
+            JOptionPane.showMessageDialog(null,"Crie um host antes de fazer um post ou você já está conectado");
         }else{
          postVO pvo = new postVO();
          pvo.setComentario(jtfComentario.getText());
-         pvo.setJogo(jtfJogo.getText());
+         pvo.setJogo((String) jcbJogo.getSelectedItem());
+            HostServicos hs = new servicos.ServicosFactory().getHostServicos();
+            pvo.setHost(hs.mostrarHost());
             if(pvo.getNumPost() < pvo.getNumPostPerm()){
             
-         postDAO pdao = new postDAO();
-         int idPost = pdao.postar(pvo);
+        
+         PostServicos ps = new servicos.ServicosFactory().getPostServicos();
+         int idPost = ps.postar(pvo);
          int [] postCriados =pvo.getIdPostCreated();
          
        int p = pvo.getNumPost();
@@ -131,11 +142,12 @@ public class GUIPostar extends javax.swing.JFrame {
                 
                 String idPost =   (String) jtTabela.getValueAt(linha, 0);
                 loginVO lvo = new loginVO();
-                postDAO PDAO = new postDAO();
-                String rsEm = PDAO.permitirDel(Integer.parseInt(idPost));
+               
+                PostServicos ps = new servicos.ServicosFactory().getPostServicos();
+                String rsEm = ps.permitirDeletarPost(Integer.parseInt(idPost));
             
                 if(rsEm.equals(lvo.getEm())){
-                PDAO.deletarPost(Integer.parseInt(idPost));
+                ps.deletarPost(Integer.parseInt(idPost));
                 
                 postVO pvo = new postVO();
                 pvo.setNumPost(pvo.getNumPost()- 1);
@@ -160,12 +172,31 @@ public class GUIPostar extends javax.swing.JFrame {
     public void deletarTodosPosts() throws SQLException{
      postVO pvo = new postVO();
      int[] posts = pvo.getIdPostCreated();
-     postDAO pdao = new postDAO();
+     
+     PostServicos ps = new servicos.ServicosFactory().getPostServicos();
      for(int i = 0; i <= pvo.getNumPost();i++){
-     pdao.deletarPost(posts[i]);
+     ps.deletarPost(posts[i]);
      posts[i] = 0;
      pvo.setNumPost(0);
      }
+    }
+    
+     Vector<Integer> idcategoria = new Vector<Integer>();
+    public void preencherJogojcb(){
+        try {
+            jogoDAO pDAO = new jogoDAO();
+            ResultSet rs = pDAO.jogoComboBox();
+            
+            while(rs.next()){
+                idcategoria.addElement(rs.getInt(1));
+                jcbJogo.addItem(rs.getString(2));
+            }//fim do while
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                null,
+                "Erro GUIManutencaoProduto.restaurarCategoria " + e.getMessage() );
+        }//fim do try catch
     }
     private void limpar(){
         dtm.setNumRows(0);
@@ -186,12 +217,12 @@ public class GUIPostar extends javax.swing.JFrame {
         jtfPesquisa = new javax.swing.JTextField();
         jcClsases = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
-        jtfJogo = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jtfComentario = new javax.swing.JTextField();
         jbCriar = new javax.swing.JButton();
         jtbDeletar = new javax.swing.JButton();
+        jcbJogo = new javax.swing.JComboBox<>();
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
@@ -254,6 +285,8 @@ public class GUIPostar extends javax.swing.JFrame {
             }
         });
 
+        jcbJogo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione..." }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -274,20 +307,20 @@ public class GUIPostar extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jcClsases, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(66, 66, 66)
+                        .addContainerGap()
                         .addComponent(jLabel3)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jtfJogo, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jcbJogo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel4))
                             .addComponent(jbCriar, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jtbDeletar)
-                            .addComponent(jtfComentario, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(15, Short.MAX_VALUE))
+                            .addComponent(jtfComentario, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jtbDeletar))))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -297,23 +330,24 @@ public class GUIPostar extends javax.swing.JFrame {
                     .addComponent(jcClsases, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jtfPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jtfJogo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
+                        .addGap(3, 3, 3)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(jtfComentario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jbCriar)
                             .addComponent(jtbDeletar)))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel4)
-                        .addComponent(jtfComentario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jcbJogo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3)))
                 .addContainerGap())
         );
 
@@ -400,10 +434,10 @@ public class GUIPostar extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton jbCriar;
     private javax.swing.JComboBox<String> jcClsases;
+    private javax.swing.JComboBox<String> jcbJogo;
     private javax.swing.JTable jtTabela;
     private javax.swing.JButton jtbDeletar;
     private javax.swing.JTextField jtfComentario;
-    private javax.swing.JTextField jtfJogo;
     private javax.swing.JTextField jtfPesquisa;
     // End of variables declaration//GEN-END:variables
 }

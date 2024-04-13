@@ -103,7 +103,7 @@ public class postDAO {
 
             PreparedStatement pstm = con.prepareStatement(sql);
             pstm.setString(1, usu);
-            pstm.setInt(2, 2220);
+            pstm.setInt(2, PVO.getHost());
             pstm.setString(3, PVO.getComentario());
             pstm.setString(4, PVO.getJogo());
             pstm.setString(5, LVO.getEm());
@@ -145,7 +145,7 @@ public class postDAO {
             con.close();
         }//fim da finally
     }
-    public String permitirDel(int idPost) throws SQLException{
+    public String permitirDeletarPost(int idPost) throws SQLException{
     Connection con = new ConexaoBanco().getConexao();
 
         try {
