@@ -23,12 +23,13 @@ public class loginDAO {
         Connection con = new ConexaoBanco().getConexao();
 
         try {
-            String sql = "INSERT INTO login VALUES (null, ?, ?, ? )";
+            String sql = "INSERT INTO login VALUES (null, ?, ?, ?,?,null,null,true,true)";
 
             PreparedStatement pstm = con.prepareStatement(sql);
             pstm.setString(1, LVO.getEmail());
             pstm.setString(2, LVO.getSenha());
             pstm.setString(3, LVO.getUsuario());
+            pstm.setString(4, LVO.getSenhaPais());
 
             pstm.execute();
             pstm.close();

@@ -11,9 +11,17 @@ package VO;
  */
 public class loginVO {
     private int idLogin;
-    private String email,senha,usuario;
+    private String email,senha,usuario,senhaPais;
    private static String em;
    private static boolean online;
+
+    public String getSenhaPais() {
+        return senhaPais;
+    }
+
+    public void setSenhaPais(String senhaPais) {
+        this.senhaPais = senhaPais;
+    }
 
     public static boolean isOnline() {
         return online;

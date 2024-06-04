@@ -78,10 +78,10 @@ public class GUIHost extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(GUIHost.class.getName()).log(Level.SEVERE, null, ex);
         }
-     guic.gerarLabel(guic.panel, "21", 1);
+   
     boolean running = hvo.loop;
-int FPS = 60;
-int UPS =20;
+int FPS = 6;
+int UPS =2;
 long initialTime = System.nanoTime();
 final double timeU = 1000000000 / UPS;
 final double timeF = 1000000000 / FPS;
