@@ -90,15 +90,15 @@ public class conversao {
              achouCaracter = true;
          }
     }
-    if(!achouNum){
-        return "Senha tem que ter número";
-    }else if(!achouMin){
-        return "Senha tem que ter letras minúsculas";
-    }else if(!achouMai){
-        return "Senha tem que ter letras maiúsculas";
-    }else if(!achouCaracter){
-        return "Senha tem que ter símbolos";
-    }
+//    if(!achouNum){
+//        return "Senha tem que ter número";
+//    }else if(!achouMin){
+//        return "Senha tem que ter letras minúsculas";
+//    }else if(!achouMai){
+//        return "Senha tem que ter letras maiúsculas";
+//    }else if(!achouCaracter){
+//        return "Senha tem que ter símbolos";
+//    }
     
         return "";
         

@@ -163,8 +163,14 @@ public class GUILog extends javax.swing.JFrame {
         loginVO lVO = new loginVO();
         lVO.setOnline(false);
 //        
-      GUIPrincipal princ = new GUIPrincipal();
-      princ.setVisible(true);
+      GUIPrincipal princ;
+        try {
+            princ = new GUIPrincipal();
+            princ.setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(GUILog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      
       dispose();
     }//GEN-LAST:event_jtbOffActionPerformed
 

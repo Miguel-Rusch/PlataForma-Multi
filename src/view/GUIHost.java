@@ -6,6 +6,7 @@
 package view;
 
 import DAO.hostDAO;
+import VO.controleVO;
 import VO.hostVO;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -70,18 +71,19 @@ public class GUIHost extends javax.swing.JFrame {
         ChatServicos cs = new servicos.ServicosFactory().getChatServicos();
         
         GUIChat guic = new GUIChat();
-        
-       
+        System.out.println(controleVO.chat);
+       if(controleVO.chat){
      guic.setVisible(true);
+        }
         try {
             cs.criarConexao();
         } catch (SQLException ex) {
             Logger.getLogger(GUIHost.class.getName()).log(Level.SEVERE, null, ex);
         }
-     guic.gerarLabel(guic.panel, "21", 1);
+   
     boolean running = hvo.loop;
-int FPS = 60;
-int UPS =20;
+int FPS = 6;
+int UPS =2;
 long initialTime = System.nanoTime();
 final double timeU = 1000000000 / UPS;
 final double timeF = 1000000000 / FPS;

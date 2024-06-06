@@ -31,7 +31,7 @@ public class GUIPostar extends javax.swing.JFrame {
     
     DefaultTableModel dtm = new DefaultTableModel(
                 new Object[][]{},
-            new Object[]{"id","Usuário", "Host", "Comentario", "Jogo"}
+            new Object[]{"id","Usuário", "Host", "Jogo"}
     );
     /**
      * Creates new form GUIPostar
@@ -56,7 +56,6 @@ public class GUIPostar extends javax.swing.JFrame {
                     String.valueOf(crod.get(i).getIdPost()),
                     String.valueOf(crod.get(i).getUsuario()),
                     String.valueOf(crod.get(i).getHost()),
-                    String.valueOf(crod.get(i).getComentario()),
                     String.valueOf(crod.get(i).getJogo()),
                     
                 });
@@ -90,7 +89,6 @@ public class GUIPostar extends javax.swing.JFrame {
                     dtm.addRow(new String[] {
                         String.valueOf(prod.get(i).getUsuario()),
                         String.valueOf(prod.get(i).getHost()),
-                        String.valueOf(prod.get(i).getComentario()),
                         String.valueOf(prod.get(i).getJogo())
                     });
                 }//fecha o laço for
@@ -109,7 +107,7 @@ public class GUIPostar extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"Crie um host antes de fazer um post ou você já está conectado");
         }else{
          postVO pvo = new postVO();
-         pvo.setComentario(jtfComentario.getText());
+         
          pvo.setJogo((String) jcbJogo.getSelectedItem());
             HostServicos hs = new servicos.ServicosFactory().getHostServicos();
             pvo.setHost(hs.mostrarHost());
@@ -218,8 +216,6 @@ public class GUIPostar extends javax.swing.JFrame {
         jcClsases = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jtfComentario = new javax.swing.JTextField();
         jbCriar = new javax.swing.JButton();
         jtbDeletar = new javax.swing.JButton();
         jcbJogo = new javax.swing.JComboBox<>();
@@ -235,18 +231,18 @@ public class GUIPostar extends javax.swing.JFrame {
 
         jtTabela.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "ID", "Usuário", "Host", "Comentário", "Jogo"
+                "ID", "Usuário", "Host", "Jogo"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -254,6 +250,10 @@ public class GUIPostar extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(jtTabela);
+        if (jtTabela.getColumnModel().getColumnCount() > 0) {
+            jtTabela.getColumnModel().getColumn(0).setResizable(false);
+            jtTabela.getColumnModel().getColumn(1).setResizable(false);
+        }
 
         jLabel1.setText("Pesquisar");
 
@@ -268,8 +268,6 @@ public class GUIPostar extends javax.swing.JFrame {
         jLabel2.setText("       Criar Post");
 
         jLabel3.setText("Jogo");
-
-        jLabel4.setText("Comentário");
 
         jbCriar.setText("Criar");
         jbCriar.addActionListener(new java.awt.event.ActionListener() {
@@ -307,19 +305,17 @@ public class GUIPostar extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jcClsases, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(51, 51, 51)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
+                                .addComponent(jbCriar, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(105, 105, 105)
+                                .addComponent(jtbDeletar))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(30, 30, 30)
                                 .addComponent(jcbJogo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel4))
-                            .addComponent(jbCriar, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jtfComentario, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jtbDeletar))))
+                                .addGap(17, 17, 17)))))
                 .addContainerGap(18, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -330,24 +326,18 @@ public class GUIPostar extends javax.swing.JFrame {
                     .addComponent(jcClsases, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jtfPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jtfComentario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jbCriar)
-                            .addComponent(jtbDeletar)))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jcbJogo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3)))
+                .addGap(4, 4, 4)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jcbJogo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jbCriar)
+                    .addComponent(jtbDeletar))
                 .addContainerGap())
         );
 
@@ -430,14 +420,12 @@ public class GUIPostar extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton jbCriar;
     private javax.swing.JComboBox<String> jcClsases;
     private javax.swing.JComboBox<String> jcbJogo;
     private javax.swing.JTable jtTabela;
     private javax.swing.JButton jtbDeletar;
-    private javax.swing.JTextField jtfComentario;
     private javax.swing.JTextField jtfPesquisa;
     // End of variables declaration//GEN-END:variables
 }

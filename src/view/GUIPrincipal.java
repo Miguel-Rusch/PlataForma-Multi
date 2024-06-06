@@ -5,12 +5,19 @@
  */
 package view;
 
+import DAO.controleDAO;
+import VO.controleVO;
 import VO.loginVO;
 import com.sun.org.apache.bcel.internal.generic.AALOAD;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 
 
 /**
@@ -22,10 +29,25 @@ public class GUIPrincipal extends javax.swing.JFrame {
     /**
      * Creates new form GUIPrincipal
      */
-    public GUIPrincipal() {
+    public GUIPrincipal() throws SQLException {
         initComponents();
+        controleDAO cdao = new controleDAO();
+        cdao.mostrarInfo();
+        //Cria uma instância da classe Calendar com a data atual
+        Calendar dataAtual = Calendar.getInstance();
+
         
+        int dia = dataAtual .get(Calendar.DAY_OF_MONTH);
+        if(dia != controleVO.dia){
+            
+            cdao.atualizarTempo(0);
+        }
         //se tiver verdadeiro não aparece o postar
+        if(controleVO.multiplayer){
+         jbPostar.setVisible(false);
+         jbHost.setVisible(false);
+        }
+        atualizarTempo();
 //         LoginVO lVO = new LoginVO();
 //         System.out.println(lVO.isOnline());
 //         if(!lVO.isOnline()){
@@ -34,6 +56,48 @@ public class GUIPrincipal extends javax.swing.JFrame {
 //         }
          
     }
+     public final static int tempo = 300000;//ta em milisegundos
+
+Timer timer = new Timer(tempo, new ActionListener() {
+    public void actionPerformed(ActionEvent evt) {
+        try {
+            //...Mandar no banco de dados prapoomfops...
+
+            atualizarTempo();
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+    }    
+});
+    public void atualizarTempo() throws SQLException{
+        controleDAO cdao = new controleDAO();
+        
+        cdao.mostrarInfo();
+        cdao.atualizarTempo(controleVO.tempoAtual + tempo/600000);
+        System.out.println(controleVO.tempoAtual + tempo/60);
+        if(controleVO.tempoMax <= controleVO.tempoAtual){
+        JOptionPane.showMessageDialog(null, "Tempo acabou espere até o prómixo dia para poder jogar mais");
+        jbPostar.setVisible(false);
+         jbHost.setVisible(false);
+         jbPesquisar.setVisible(false);
+         timer.stop();
+        }else{
+        timer.restart();
+        }
+    }
+    
+    public static void permicoes(){
+     if(controleVO.multiplayer){
+         jbPostar.setVisible(false);
+         jbHost.setVisible(false);
+        }else{
+         jbPostar.setVisible(true);
+         jbHost.setVisible(true);
+     }
+    }
+   
+ 
     
   
 
@@ -52,10 +116,11 @@ public class GUIPrincipal extends javax.swing.JFrame {
         jbPesquisar = new javax.swing.JButton();
         jbHost = new javax.swing.JButton();
         jbPostar = new javax.swing.JButton();
-        jtbChat = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jpmPerfil = new javax.swing.JMenuItem();
+        jMenuPais = new javax.swing.JMenu();
+        jpmPais = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -79,59 +144,43 @@ public class GUIPrincipal extends javax.swing.JFrame {
         });
 
         jbPostar.setText("Postar");
+        jbPostar.setToolTipText("");
+        jbPostar.setAutoscrolls(true);
         jbPostar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbPostarActionPerformed(evt);
             }
         });
 
-        jtbChat.setText("Chat");
-        jtbChat.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtbChatActionPerformed(evt);
-            }
-        });
-
         jDesktopPane1.setLayer(jbPesquisar, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jDesktopPane1.setLayer(jbHost, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jDesktopPane1.setLayer(jbPostar, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jDesktopPane1.setLayer(jtbChat, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
         jDesktopPane1.setLayout(jDesktopPane1Layout);
         jDesktopPane1Layout.setHorizontalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
-                .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                        .addGap(82, 82, 82)
-                        .addComponent(jbPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                        .addGap(306, 306, 306)
-                        .addComponent(jbPostar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
-                .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jbHost, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
-                        .addComponent(jtbChat)
-                        .addGap(17, 17, 17)))
-                .addGap(159, 159, 159))
+                .addGap(82, 82, 82)
+                .addComponent(jbPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 264, Short.MAX_VALUE)
+                .addComponent(jbHost, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(195, 195, 195))
+            .addGroup(jDesktopPane1Layout.createSequentialGroup()
+                .addGap(308, 308, 308)
+                .addComponent(jbPostar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addComponent(jbPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                        .addGap(50, 50, 50)
-                        .addComponent(jbHost, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(102, 102, 102)
+                .addGap(38, 38, 38)
                 .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jbPostar, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jtbChat))
-                .addContainerGap(243, Short.MAX_VALUE))
+                    .addComponent(jbPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jbHost, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(111, 111, 111)
+                .addComponent(jbPostar, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(246, Short.MAX_VALUE))
         );
 
         jDesktopPane2.setLayer(jDesktopPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -163,6 +212,18 @@ public class GUIPrincipal extends javax.swing.JFrame {
         jMenu1.add(jpmPerfil);
 
         jMenuBar1.add(jMenu1);
+
+        jMenuPais.setText("Controle Parental");
+
+        jpmPais.setText("Controle Parental");
+        jpmPais.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jpmPaisActionPerformed(evt);
+            }
+        });
+        jMenuPais.add(jpmPais);
+
+        jMenuBar1.add(jMenuPais);
 
         setJMenuBar(jMenuBar1);
 
@@ -201,6 +262,7 @@ public class GUIPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jpmPerfilActionPerformed
 
     private void jbPostarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbPostarActionPerformed
+        
         GUIPostar post = new GUIPostar();
 
         post.setVisible(true);
@@ -232,12 +294,33 @@ public class GUIPrincipal extends javax.swing.JFrame {
            
     }//GEN-LAST:event_formWindowClosing
 
-    private void jtbChatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtbChatActionPerformed
-     GUIChat guic = new GUIChat();
-     
-     guic.setVisible(true);
-     
-    }//GEN-LAST:event_jtbChatActionPerformed
+    private void jpmPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jpmPaisActionPerformed
+        try {
+            
+        loginVO lvo = new loginVO();
+        if(lvo.isOnline()){
+            String senhaPais = JOptionPane.showInputDialog("Digite a senha parental:");
+            lvo.setSenhaPais(senhaPais);
+            controleDAO conDAO = new controleDAO();
+           ResultSet rs =conDAO.login(lvo);
+           if(rs.next()){
+            GUIControle cont = new GUIControle();
+            jDesktopPane2.add(cont);
+            cont.setVisible(true);
+           }else{
+               JOptionPane.showMessageDialog(
+                    null,
+                    "Senha incorreta!");
+           }
+        }else{
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Não pode acessar o controle parental pois está em modo offline!");
+        }
+        
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_jpmPaisActionPerformed
 
     /**
      * @param args the command line arguments
@@ -269,7 +352,11 @@ public class GUIPrincipal extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new GUIPrincipal().setVisible(true);
+                try {
+                    new GUIPrincipal().setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(GUIPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -279,11 +366,12 @@ public class GUIPrincipal extends javax.swing.JFrame {
     public static javax.swing.JDesktopPane jDesktopPane2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu jMenuPais;
     private javax.swing.JPopupMenu jPopupMenu1;
-    private javax.swing.JButton jbHost;
+    public static javax.swing.JButton jbHost;
     private javax.swing.JButton jbPesquisar;
-    private javax.swing.JButton jbPostar;
+    public static javax.swing.JButton jbPostar;
+    private javax.swing.JMenuItem jpmPais;
     private javax.swing.JMenuItem jpmPerfil;
-    private javax.swing.JButton jtbChat;
     // End of variables declaration//GEN-END:variables
 }

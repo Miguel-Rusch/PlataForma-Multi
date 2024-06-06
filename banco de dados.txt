@@ -587,3 +587,563 @@ alter table host
 drop column jogadaAlter;
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+create database PI1;
+
+use PI1;
+
+create table if not exists login(
+	idLogin int not null,
+    email	varchar(45) not null unique,
+    senha  varchar(15) not null,
+    usuario varchar(15) not null
+);
+
+
+alter table login 
+add constraint PK_LOGIN primary key(idLogin);
+
+alter table login
+change column  idLogin idLogin int not null auto_increment;
+
+select * from login;
+
+select * from login where email like 's';
+
+alter table login
+change column  email email varchar(15) not null ;
+
+alter table login
+add column senhaPais varchar(15);
+
+alter table login
+add column maxTempo int;
+
+alter table login
+add column atualTempo int;
+
+alter table login
+add column  chat boolean;
+
+alter table login
+add column multiplayer boolean;
+
+alter table login
+change column senhaPais senhaPais varchar(15) not null;
+
+Update login set 
+                    email =  'ew'   , 
+                     senha =   'ew' , 
+                    usuario =   'ires'
+                     where idLogin =   6;
+                     
+			
+
+create table if not exists jogo(
+	idJogo int not null,
+    nome	varchar(45) not null unique,
+    tipo  varchar(15) not null,
+    acessos int 
+);
+
+select * from jogo;
+
+alter table jogo 
+add constraint PK_JOGO primary key(idJogo);
+
+alter table jogo
+change column idJogo idJogo int not null auto_increment;
+
+insert into jogo values (null,'Counter Strike','FPS',5);
+
+insert into jogo values (null,'Guess The Number','Estratégia',0);
+
+insert into jogo values (null,'Tetris','Quebra-Cabeça',3);
+
+insert into jogo values (null,'Xadrez','Estratégia',12);
+
+insert into jogo values (null,'COD','FPS',7);
+
+select * from jogo;
+
+Select * from jogo where idJogo = 1;
+
+Select * from jogo
+order by acessos DESC;
+
+Select * from jogo
+order by nome desc;
+
+Select * from jogo where tipo like '%Estra%' order by acessos asc;
+
+
+create table if not exists post(
+	idPost int not null,
+    usuario	varchar(45) not null,
+    host  int,
+    comentario varchar(200) 
+);
+
+alter table post 
+add constraint PK_POST primary key(idPost);
+
+alter table post
+change column idPost idPost int not null auto_increment;
+
+alter table post
+add column jogo varchar(45);
+
+alter table post
+add column email varchar(45);
+
+select email from post;
+
+select * from post;
+
+select usuario from login where email like 'm';
+
+select* from post ;
+
+create table if not exists host(
+	idHost int not null,
+    conect	boolean not null,
+    jogada varchar(45),
+    jogo varchar(45),
+    idHostConect varchar(45),
+    idUsuario varchar(45),
+    jogadaAlter varchar(45) 
+);
+
+alter table host 
+add constraint PK_HOST primary key(idHost);
+
+alter table host
+change column idHost idHost int not null auto_increment;
+
+alter table host
+change column idUsuario idUsuario varchar(45) not null unique;
+
+select * from host where idUsuario = 'we';
+
+
+select * from login;
+
+select * from host;
+
+
+
+delete from host where idUsuario = 'admin';
+delete from host where idHost =7;
+
+select * from host ;
+
+select * from host where idUsuario like 'admin';
+
+
+
+alter table host
+add column senha varchar(45);
+
+alter table host	
+add column vistoMensagem boolean;
+
+
+
+alter table host
+add column vistoJogo varchar(45);
+
+
+delete from host where idHost = 32;
+
+select * from host;
+select * from host where idHost like 75;
+
+create table if not exists chat(
+	idChat int not null,
+    idHost int not null,
+    idHostConect int,
+    mensagem varchar(250),
+    idNumMensagem int not null
+)
+
+alter table chat
+add constraint PK_CHAT primary key(idchat);
+
+alter table chat
+change column idChat idChat int not null auto_increment;
+update chat set mensagem = 'we',idNUmMensagem = 1 like idHost  = 63 and idHostConect = 64;
+
+select * from chat;
+update chat set mensagem = 'Oi',idNumMensagem = 1 where idChat = 1;
+create table if not exists jogadas(
+	idJogadas int not null,
+    idHostConect int not null,
+    idHost int not null,
+    jogada varchar(45),
+    vistoJogada	boolean,
+    jogadaAlternativa varchar(45),
+    vistoJogadaAlternativa boolean
+);
+
+alter table jogadas
+add constraint PK_JOGADAS primary key(idJogadas);
+
+alter table jogadas
+change column idJogadas idJogadas int not null auto_increment;
+
+select * from chat;
+delete  from chat where idChat < 31;
+delete from chat where idChat = 23;
+select * from host;
+
+select * from host where idHost like '17';
+
+update host set vistoJogo = false where idHost = 30;
+
+update host set vistoMensagem = true where idHost = 49;
+
+update host set vistoMensagem = true where idHost = 47;
+
+select * from jogadas;
+
+describe login;
+
+select * from login;
+
+insert into login values(null,1,1,1);
+
+insert into login values(null,2,2,2);
+
+alter table host
+drop column jogadaAlter;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+create database PI1;
+
+use PI1;
+
+create table if not exists login(
+	idLogin int not null,
+    email	varchar(45) not null unique,
+    senha  varchar(15) not null,
+    usuario varchar(15) not null
+);
+
+
+alter table login 
+add constraint PK_LOGIN primary key(idLogin);
+
+alter table login
+change column  idLogin idLogin int not null auto_increment;
+
+select * from login;
+
+select * from login where email like 's';
+
+alter table login
+change column  email email varchar(15) not null ;
+
+alter table login
+add column senhaPais varchar(15);
+
+alter table login
+add column maxTempo int;
+
+alter table login
+add column atualTempo int;
+
+alter table login
+add column  chat boolean;
+
+alter table login
+add column multiplayer boolean;
+
+alter table login
+add column dia int;
+
+alter table login
+change column senhaPais senhaPais varchar(15) not null;
+
+Update login set 
+                    email =  'ew'   , 
+                     senha =   'ew' , 
+                    usuario =   'ires'
+                     where idLogin =   6;
+                     
+			
+select * from login;
+
+
+create table if not exists jogo(
+	idJogo int not null,
+    nome	varchar(45) not null unique,
+    tipo  varchar(15) not null,
+    acessos int 
+);
+
+select * from jogo;
+
+alter table jogo 
+add constraint PK_JOGO primary key(idJogo);
+
+alter table jogo
+change column idJogo idJogo int not null auto_increment;
+
+insert into jogo values (null,'Counter Strike','FPS',5);
+
+insert into jogo values (null,'Guess The Number','Estratégia',0);
+
+insert into jogo values (null,'Tetris','Quebra-Cabeça',3);
+
+insert into jogo values (null,'Xadrez','Estratégia',12);
+
+insert into jogo values (null,'COD','FPS',7);
+
+select * from jogo;
+
+Select * from jogo where idJogo = 1;
+
+Select * from jogo
+order by acessos DESC;
+
+Select * from jogo
+order by nome desc;
+
+Select * from jogo where tipo like '%Estra%' order by acessos asc;
+
+
+create table if not exists post(
+	idPost int not null,
+    usuario	varchar(45) not null,
+    host  int,
+    comentario varchar(200) 
+);
+
+alter table post 
+add constraint PK_POST primary key(idPost);
+
+alter table post
+change column idPost idPost int not null auto_increment;
+
+alter table post
+add column jogo varchar(45);
+
+alter table post
+add column email varchar(45);
+
+select email from post;
+
+select * from post;
+
+select usuario from login where email like 'm';
+
+select* from post ;
+
+create table if not exists host(
+	idHost int not null,
+    conect	boolean not null,
+    jogada varchar(45),
+    jogo varchar(45),
+    idHostConect varchar(45),
+    idUsuario varchar(45),
+    jogadaAlter varchar(45) 
+);
+
+alter table host 
+add constraint PK_HOST primary key(idHost);
+
+alter table host
+change column idHost idHost int not null auto_increment;
+
+alter table host
+change column idUsuario idUsuario varchar(45) not null unique;
+
+select * from host where idUsuario = 'we';
+
+
+select * from login;
+
+select * from host;
+
+
+
+delete from host where idUsuario = 'admin';
+delete from host where idHost =7;
+
+select * from host ;
+
+select * from host where idUsuario like 'admin';
+
+
+
+alter table host
+add column senha varchar(45);
+
+alter table host	
+add column vistoMensagem boolean;
+
+
+
+alter table host
+add column vistoJogo varchar(45);
+
+
+delete from host where idHost = 32;
+
+select * from host;
+select * from host where idHost like 75;
+
+create table if not exists chat(
+	idChat int not null,
+    idHost int not null,
+    idHostConect int,
+    mensagem varchar(250),
+    idNumMensagem int not null
+)
+
+alter table chat
+add constraint PK_CHAT primary key(idchat);
+
+alter table chat
+change column idChat idChat int not null auto_increment;
+update chat set mensagem = 'we',idNUmMensagem = 1 like idHost  = 63 and idHostConect = 64;
+
+select * from chat;
+update chat set mensagem = 'Oi',idNumMensagem = 1 where idChat = 1;
+create table if not exists jogadas(
+	idJogadas int not null,
+    idHostConect int not null,
+    idHost int not null,
+    jogada varchar(45),
+    vistoJogada	boolean,
+    jogadaAlternativa varchar(45),
+    vistoJogadaAlternativa boolean
+);
+
+alter table jogadas
+add constraint PK_JOGADAS primary key(idJogadas);
+
+alter table jogadas
+change column idJogadas idJogadas int not null auto_increment;
+
+select * from chat;
+delete  from chat where idChat < 31;
+delete from chat where idChat = 23;
+select * from host;
+
+select * from host where idHost like '17';
+
+update host set vistoJogo = false where idHost = 30;
+
+update host set vistoMensagem = true where idHost = 49;
+
+update host set vistoMensagem = true where idHost = 47;
+
+select * from jogadas;
+
+describe login;
+
+select * from login;
+
+insert into login values(null,1,1,1);
+
+insert into login values(null,2,2,2);
+
+alter table host
+drop column jogadaAlter;
+

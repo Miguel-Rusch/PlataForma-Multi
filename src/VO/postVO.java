@@ -11,7 +11,7 @@ package VO;
  */
 public class postVO {
     private int idPost,host;//numPost é a variável que  quantos post o usuário  postou e o numPostPerm é o que controla o maximo de posts
-    private String usuario,comentario,jogo;
+    private String usuario,jogo;
     private static  int numPost,numPostPerm = 1;
     private static int[] idPostCreated = new int[getNumPostPerm()] ;
 
@@ -75,13 +75,7 @@ public class postVO {
         this.usuario = usuario;
     }
 
-    public String getComentario() {
-        return comentario;
-    }
-
-    public void setComentario(String comentario) {
-        this.comentario = comentario;
-    }
+  
     
     
 }

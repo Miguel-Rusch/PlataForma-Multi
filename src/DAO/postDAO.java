@@ -37,7 +37,6 @@ public class postDAO {
                 PVO.setUsuario(rs.getString("usuario"));
                 PVO.setJogo(rs.getString("jogo"));
                 PVO.setHost(rs.getInt("host"));
-                PVO.setComentario(rs.getString("comentario"));
 
                 pro.add(PVO);
             }//fim do while
@@ -68,7 +67,6 @@ public class postDAO {
                 
                 PVO.setUsuario(rs.getString("usuario"));
                 PVO.setHost(rs.getInt("host"));
-                PVO.setComentario(rs.getString("comentario"));
                 PVO.setJogo(rs.getString("jogo"));
                 
 
@@ -104,7 +102,7 @@ public class postDAO {
             PreparedStatement pstm = con.prepareStatement(sql);
             pstm.setString(1, usu);
             pstm.setInt(2, PVO.getHost());
-            pstm.setString(3, PVO.getComentario());
+            pstm.setString(3, "");
             pstm.setString(4, PVO.getJogo());
             pstm.setString(5, LVO.getEm());
 
