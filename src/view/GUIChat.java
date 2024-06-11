@@ -8,6 +8,7 @@ package view;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,11 +16,14 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import servicos.ChatServicos;
 import utilidades.conversao;
+import utilidades.speelChecker;
 
 
 /**
@@ -28,7 +32,8 @@ import utilidades.conversao;
  */
 public class GUIChat extends javax.swing.JFrame {
     private  int posicao =50;
-    final  JPanel panel = new JPanel();
+    final static JTextArea panel = new JTextArea();
+    
     /**
      * Creates new form GUIChate
      */
@@ -48,6 +53,7 @@ public class GUIChat extends javax.swing.JFrame {
         //dos componentes, no caso, somente em vertical
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setSize(new Dimension(259, 231));
+        panel.setEditable(false);
         //adicionar borda transparente ao painel
         //defini right e left pros botoes n?o ficarem
         //colados na borda
@@ -61,7 +67,7 @@ public class GUIChat extends javax.swing.JFrame {
 
     }
     
-       public static void gerarLabel(JPanel panel,String mensagem,int num) {
+       public static void gerarLabel(JTextArea panel,String mensagem,int num) {
            conversao conv = new conversao();
            mensagem = conv.formatacaoMenagem(mensagem,num);
         JLabel label = new JLabel(mensagem);
@@ -75,7 +81,7 @@ public class GUIChat extends javax.swing.JFrame {
          
         panel.add(label);
        
-          
+         
 
          
         //o revalidate deve ser aplicado ao componente root
@@ -87,6 +93,10 @@ public class GUIChat extends javax.swing.JFrame {
        public void mandarMensagem() throws SQLException{
            ChatServicos cs = new servicos.ServicosFactory().getChatServicos();
            cs.mandarMensagem(jtfMensagem.getText());
+       }
+       public boolean correcao() throws IOException{
+           speelChecker spc = new speelChecker();
+          return spc.checkSpelling(jtfMensagem, jTextArea1);
        }
 
     /**
@@ -100,6 +110,15 @@ public class GUIChat extends javax.swing.JFrame {
 
         jtfMensagem = new javax.swing.JTextField();
         jtbEnviar = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        jButton1 = new javax.swing.JButton();
+
+        jtfMensagem.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtfMensagemKeyTyped(evt);
+            }
+        });
 
         jtbEnviar.setText("Enviar");
         jtbEnviar.addActionListener(new java.awt.event.ActionListener() {
@@ -108,24 +127,45 @@ public class GUIChat extends javax.swing.JFrame {
             }
         });
 
+        jTextArea1.setEditable(false);
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
+        jButton1.setText("Corrigir");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(89, 89, 89)
+                .addGap(6, 6, 6)
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jtfMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jtbEnviar)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addContainerGap(216, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(279, 279, 279)
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jtfMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jtbEnviar))
+                    .addComponent(jtbEnviar)
+                    .addComponent(jButton1))
                 .addGap(36, 36, 36))
         );
 
@@ -133,7 +173,13 @@ public class GUIChat extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jtbEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtbEnviarActionPerformed
-        
+        boolean ir = false;
+        try {
+        ir = correcao();
+        } catch (IOException ex) {
+            Logger.getLogger(GUIChat.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if(ir){
         try {
             mandarMensagem();
         } catch (SQLException ex) {
@@ -142,8 +188,27 @@ public class GUIChat extends javax.swing.JFrame {
         gerarLabel(panel,jtfMensagem.getText(),0);
         jtfMensagem.setText("");
         getContentPane().repaint();
+        }else{
+       JOptionPane.showMessageDialog(null, "Para mandar mensagem veja se as palavras estão certas"); 
+       }
 
     }//GEN-LAST:event_jtbEnviarActionPerformed
+
+    private void jtfMensagemKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtfMensagemKeyTyped
+//        try {
+//            correcao();
+//        } catch (IOException ex) {
+//            Logger.getLogger(GUIChat.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+    }//GEN-LAST:event_jtfMensagemKeyTyped
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try {
+            correcao();
+        } catch (IOException ex) {
+            Logger.getLogger(GUIChat.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -182,6 +247,9 @@ public class GUIChat extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JScrollPane jScrollPane1;
+    public static javax.swing.JTextArea jTextArea1;
     private javax.swing.JButton jtbEnviar;
     private javax.swing.JTextField jtfMensagem;
     // End of variables declaration//GEN-END:variables
